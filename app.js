@@ -224,6 +224,13 @@ function initSpotifySDK() {
 
 async function startPlaylist() {
   const token = await getValidToken();
+
+  // Turn shuffle on for this device before starting playback
+  await fetch(`https://api.spotify.com/v1/me/player/shuffle?state=true&device_id=${deviceId}`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
   await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
     method: "PUT",
     headers: {
