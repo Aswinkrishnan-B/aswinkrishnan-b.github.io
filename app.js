@@ -2,8 +2,8 @@
    പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി — Spotify playlist player
    Fill in the two values below before deploying.
    ============================================================ */
-const CLIENT_ID = "d4537e8436f4f6bb93b8e6f093bb5e0";
-const PLAYLIST_ID = "21iS4SeHFzpuWCAGIh8PFH?si"; // just the ID, not the full URL
+const CLIENT_ID = "7d4537e8436f4f6bb93b8e6f093bb5e0";
+const PLAYLIST_ID = "21iS4SeHFzpuWCAGIh8PFH"; // just the ID, not the full URL
 const REDIRECT_URI = window.location.origin + window.location.pathname; // must match Spotify dashboard exactly
 /* ============================================================ */
 
