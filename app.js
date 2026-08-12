@@ -1,52 +1,108 @@
-/* =========================================================
-   പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി
-   YouTube Music Playlist Player
-========================================================= */
+const PLAYLIST_ID =
+    "PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD";
 
-/*
-    Playlist:
-    https://music.youtube.com/playlist?list=PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD
-*/
-
-const PLAYLIST_ID = "PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD";
 
 let player = null;
 let playerReady = false;
-let hasStarted = false;
-let pendingStart = false;
+let started = false;
 
 
-/* =========================================================
-   DOM
-========================================================= */
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
-const startScreen = document.getElementById("startScreen");
-const startButton = document.getElementById("startButton");
+const startScreen =
+    document.getElementById("start-screen");
 
-const playerContainer = document.getElementById("playerContainer");
+const startButton =
+    document.getElementById("start-button");
 
-const playButton = document.getElementById("playButton");
-const nextButton = document.getElementById("nextButton");
+const musicPlayer =
+    document.getElementById("music-player");
 
-const songTitle = document.getElementById("songTitle");
-const songThumbnail = document.getElementById("songThumbnail");
+const playPause =
+    document.getElementById("play-pause");
 
-const clock = document.getElementById("clock");
-const listenerCount = document.getElementById("listenerCount");
+const nextButton =
+    document.getElementById("next");
+
+const trackTitle =
+    document.getElementById("track-title");
+
+const albumArt =
+    document.getElementById("album-art");
+
+const albumPlaceholder =
+    document.getElementById("album-placeholder");
+
+const clock =
+    document.getElementById("clock");
+
+const onlineNumber =
+    document.getElementById("online-number");
+
+const titleImage =
+    document.getElementById("title-image");
 
 
-/* =========================================================
+/* =====================================================
+   CHECK ASSETS
+===================================================== */
+
+titleImage.addEventListener("error", () => {
+
+    console.error(
+        "ERROR: title.png could not be loaded."
+    );
+
+    /*
+        If title.png is missing, create a text fallback.
+    */
+
+    titleImage.style.display = "none";
+
+    const fallback =
+        document.createElement("div");
+
+    fallback.id = "title-fallback";
+
+    fallback.textContent =
+        "പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി";
+
+    fallback.style.position = "absolute";
+    fallback.style.zIndex = "10";
+    fallback.style.top = "11%";
+    fallback.style.left = "50%";
+    fallback.style.transform = "translateX(-50%)";
+    fallback.style.width = "90%";
+    fallback.style.textAlign = "center";
+    fallback.style.color = "white";
+    fallback.style.fontSize = "clamp(30px, 6vw, 72px)";
+    fallback.style.fontWeight = "700";
+    fallback.style.textShadow =
+        "0 4px 20px rgba(0,0,0,.8)";
+
+    document.getElementById("app")
+        .appendChild(fallback);
+});
+
+
+/* =====================================================
    CLOCK
-========================================================= */
+===================================================== */
 
 function updateClock() {
 
     const now = new Date();
 
     let hours = now.getHours();
-    const minutes = String(now.getMinutes()).padStart(2, "0");
 
-    const suffix = hours >= 12 ? "pm" : "am";
+    const minutes =
+        String(now.getMinutes())
+        .padStart(2, "0");
+
+    const suffix =
+        hours >= 12 ? "pm" : "am";
 
     hours = hours % 12;
 
@@ -54,7 +110,8 @@ function updateClock() {
         hours = 12;
     }
 
-    clock.textContent = `${hours}:${minutes} ${suffix}`;
+    clock.textContent =
+        `${hours}:${minutes} ${suffix}`;
 }
 
 updateClock();
@@ -62,376 +119,404 @@ updateClock();
 setInterval(updateClock, 1000);
 
 
-/* =========================================================
-   SIMULATED ONLINE COUNT
-========================================================= */
+/* =====================================================
+   DECORATIVE ONLINE COUNT
+===================================================== */
 
-let fakeListeners = 127;
+let listeners = 128;
 
-function updateFakeListeners() {
+setInterval(() => {
 
-    /*
-        Decorative only.
-        This is deliberately NOT a real visitor counter.
-    */
+    const movement =
+        Math.floor(Math.random() * 3) - 1;
 
-    const change = Math.floor(Math.random() * 3) - 1;
+    listeners += movement;
 
-    fakeListeners += change;
+    listeners =
+        Math.max(121, Math.min(136, listeners));
 
-    fakeListeners = Math.max(
-        118,
-        Math.min(139, fakeListeners)
-    );
+    onlineNumber.textContent =
+        listeners;
 
-    listenerCount.textContent = fakeListeners;
-}
-
-setInterval(updateFakeListeners, 7000);
+}, 6000);
 
 
-/* =========================================================
+/* =====================================================
    YOUTUBE API
-========================================================= */
-
-function loadYouTubeAPI() {
-
-    const script = document.createElement("script");
-
-    script.src = "https://www.youtube.com/iframe_api";
-
-    document.head.appendChild(script);
-}
-
+===================================================== */
 
 /*
-    YouTube calls this function automatically once
-    the IFrame Player API has loaded.
+    The YouTube IFrame API calls this function automatically
+    once https://www.youtube.com/iframe_api has loaded.
 */
 
 window.onYouTubeIframeAPIReady = function () {
 
-    player = new YT.Player("youtube-player", {
+    console.log("YouTube API loaded.");
 
-        width: "200",
-        height: "200",
+    player =
+        new YT.Player("youtube-player", {
 
-        playerVars: {
-            autoplay: 0,
-            controls: 0,
-            disablekb: 1,
-            fs: 0,
-            iv_load_policy: 3,
-            modestbranding: 1,
-            playsinline: 1,
-            rel: 0,
+            width: "1",
+            height: "1",
 
-            listType: "playlist",
-            list: PLAYLIST_ID,
+            playerVars: {
 
-            /*
-                The origin helps YouTube identify the
-                embedding website when hosted on GitHub Pages.
-            */
-            origin: window.location.origin
-        },
+                autoplay: 0,
 
-        events: {
-            onReady: onPlayerReady,
-            onStateChange: onPlayerStateChange,
-            onError: onPlayerError
-        }
+                controls: 0,
 
-    });
+                disablekb: 1,
+
+                fs: 0,
+
+                iv_load_policy: 3,
+
+                playsinline: 1,
+
+                rel: 0,
+
+                modestbranding: 1
+
+            },
+
+            events: {
+
+                onReady:
+                    handlePlayerReady,
+
+                onStateChange:
+                    handlePlayerState,
+
+                onError:
+                    handlePlayerError
+
+            }
+
+        });
+
 };
 
 
-/* =========================================================
+/* =====================================================
    PLAYER READY
-========================================================= */
+===================================================== */
 
-function onPlayerReady() {
+function handlePlayerReady(event) {
+
+    console.log("YouTube player ready.");
 
     playerReady = true;
 
     /*
-        Explicitly load the playlist so the player knows
-        the playlist structure before playback begins.
+        Load the playlist.
+
+        Using the simple string form is more reliable than
+        the object form across different versions of the API.
     */
 
-    player.loadPlaylist({
-        list: PLAYLIST_ID,
-        listType: "playlist",
-        index: 0
-    });
+    player.loadPlaylist(
+        PLAYLIST_ID
+    );
 
-    /*
-        If the visitor clicked Start before the API had
-        finished loading, start playback now.
-    */
-
-    if (pendingStart) {
-        startPlayback();
-    }
 }
 
 
-/* =========================================================
+/* =====================================================
    START
-========================================================= */
+===================================================== */
 
-startButton.addEventListener("click", function () {
-
-    pendingStart = true;
-
-    if (playerReady) {
-        startPlayback();
-    }
-
-});
+startButton.addEventListener(
+    "click",
+    startMusic
+);
 
 
-function startPlayback() {
+function startMusic() {
 
-    if (!player || !playerReady) {
+    if (!playerReady || !player) {
+
+        console.warn(
+            "YouTube player is not ready yet."
+        );
+
         return;
     }
 
-    hasStarted = true;
-    pendingStart = false;
+    started = true;
 
     /*
-        This call occurs as a consequence of the user's
-        button click, satisfying browser autoplay policy.
+        Start playback directly as a result of the
+        user's click.
     */
 
     player.playVideo();
 
     startScreen.classList.add("hidden");
-    playerContainer.classList.add("visible");
 
-    updateSongInfo();
+    musicPlayer.classList.add("visible");
+
+    setTimeout(
+        updateTrackInformation,
+        700
+    );
 }
 
 
-/* =========================================================
+/* =====================================================
    PLAY / PAUSE
-========================================================= */
+===================================================== */
 
-playButton.addEventListener("click", function () {
+playPause.addEventListener(
+    "click",
+    () => {
 
-    if (!player || !playerReady) {
-        return;
-    }
+        if (!playerReady || !player) {
+            return;
+        }
 
-    const state = player.getPlayerState();
+        const state =
+            player.getPlayerState();
 
-    if (
-        state === YT.PlayerState.PLAYING ||
-        state === YT.PlayerState.BUFFERING
-    ) {
+        if (
+            state === YT.PlayerState.PLAYING ||
+            state === YT.PlayerState.BUFFERING
+        ) {
 
-        player.pauseVideo();
+            player.pauseVideo();
 
-    } else {
+        } else {
 
-        player.playVideo();
+            player.playVideo();
 
-    }
-
-});
-
-
-/* =========================================================
-   PLAY BUTTON ICON
-========================================================= */
-
-function updatePlayButton() {
-
-    if (!player || !playerReady) {
-        return;
-    }
-
-    const state = player.getPlayerState();
-
-    if (state === YT.PlayerState.PLAYING) {
-
-        playButton.textContent = "Ⅱ";
-        playButton.setAttribute("aria-label", "Pause");
-
-    } else {
-
-        playButton.textContent = "▶";
-        playButton.setAttribute("aria-label", "Play");
+        }
 
     }
-}
+);
 
 
-/* =========================================================
-   NEXT SONG
-========================================================= */
+/* =====================================================
+   NEXT
+===================================================== */
 
-nextButton.addEventListener("click", function () {
+nextButton.addEventListener(
+    "click",
+    () => {
 
-    if (!player || !playerReady) {
-        return;
+        if (!playerReady || !player) {
+            return;
+        }
+
+        player.nextVideo();
+
+        setTimeout(
+            updateTrackInformation,
+            700
+        );
+
     }
-
-    player.nextVideo();
-
-    setTimeout(updateSongInfo, 500);
-
-});
+);
 
 
-/* =========================================================
+/* =====================================================
    PLAYER STATE
-========================================================= */
+===================================================== */
 
-function onPlayerStateChange(event) {
+function handlePlayerState(event) {
 
-    updatePlayButton();
-
-    switch (event.data) {
-
-        case YT.PlayerState.PLAYING:
-
-            updateSongInfo();
-
-            break;
-
-
-        case YT.PlayerState.PAUSED:
-
-            updatePlayButton();
-
-            break;
-
-
-        case YT.PlayerState.ENDED:
-
-            /*
-                Move to the next playlist item.
-
-                The API playlist handles the ordering.
-            */
-
-            player.nextVideo();
-
-            setTimeout(updateSongInfo, 500);
-
-            break;
-
-
-        case YT.PlayerState.CUED:
-
-            updateSongInfo();
-
-            break;
-
-    }
-
-}
-
-
-/* =========================================================
-   SONG INFORMATION
-========================================================= */
-
-function updateSongInfo() {
-
-    if (!player || !playerReady) {
-        return;
-    }
-
-    const videoData = player.getVideoData();
-
-    if (!videoData) {
-        return;
-    }
-
-    const title = videoData.title;
-    const videoId = videoData.video_id;
-
-    if (title) {
-        songTitle.textContent = title;
-    }
-
-    if (videoId) {
-
-        /*
-            YouTube's standard thumbnail endpoint.
-
-            maxresdefault is attempted first.
-            If unavailable, fallback to hqdefault.
-        */
-
-        const maxThumbnail =
-            `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
-
-        const fallbackThumbnail =
-            `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-
-        songThumbnail.classList.remove("loaded");
-
-        songThumbnail.src = maxThumbnail;
-
-        songThumbnail.onload = function () {
-
-            songThumbnail.classList.add("loaded");
-
-        };
-
-        songThumbnail.onerror = function () {
-
-            songThumbnail.onerror = null;
-
-            songThumbnail.src = fallbackThumbnail;
-
-            songThumbnail.onload = function () {
-                songThumbnail.classList.add("loaded");
-            };
-
-        };
-
-    }
-
-}
-
-
-/* =========================================================
-   ERROR HANDLING
-========================================================= */
-
-function onPlayerError(event) {
-
-    console.warn(
-        "YouTube Player Error:",
+    console.log(
+        "YouTube state:",
         event.data
     );
 
-    /*
-        If an individual video is unavailable, automatically
-        move to the next playlist item.
-    */
 
-    if (player && playerReady) {
+    if (
+        event.data ===
+        YT.PlayerState.PLAYING
+    ) {
 
-        setTimeout(function () {
+        playPause.textContent = "Ⅱ";
 
-            player.nextVideo();
-            updateSongInfo();
+        updateTrackInformation();
 
-        }, 1000);
+    }
+
+
+    else if (
+        event.data ===
+        YT.PlayerState.PAUSED
+    ) {
+
+        playPause.textContent = "▶";
+
+    }
+
+
+    else if (
+        event.data ===
+        YT.PlayerState.ENDED
+    ) {
+
+        /*
+            Automatically continue to the next track.
+        */
+
+        player.nextVideo();
+
+    }
+
+
+    else if (
+        event.data ===
+        YT.PlayerState.CUED
+    ) {
+
+        updateTrackInformation();
 
     }
 
 }
 
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
+/* =====================================================
+   TRACK INFORMATION
+===================================================== */
 
-loadYouTubeAPI();
+function updateTrackInformation() {
+
+    if (!playerReady || !player) {
+        return;
+    }
+
+
+    const data =
+        player.getVideoData();
+
+
+    if (!data) {
+        return;
+    }
+
+
+    console.log(
+        "Current video:",
+        data
+    );
+
+
+    if (data.title) {
+
+        trackTitle.textContent =
+            data.title;
+
+    }
+
+
+    if (data.video_id) {
+
+        loadThumbnail(
+            data.video_id
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   THUMBNAIL
+===================================================== */
+
+function loadThumbnail(videoId) {
+
+    albumArt.classList.remove(
+        "loaded"
+    );
+
+    albumPlaceholder.style.display =
+        "flex";
+
+
+    /*
+        Start with high quality.
+    */
+
+    const highQuality =
+        `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+    const image =
+        new Image();
+
+
+    image.onload = function () {
+
+        albumArt.src =
+            highQuality;
+
+        albumArt.classList.add(
+            "loaded"
+        );
+
+        albumPlaceholder.style.display =
+            "none";
+
+    };
+
+
+    image.onerror = function () {
+
+        albumArt.classList.remove(
+            "loaded"
+        );
+
+    };
+
+
+    image.src =
+        highQuality;
+}
+
+
+/* =====================================================
+   YOUTUBE ERRORS
+===================================================== */
+
+function handlePlayerError(event) {
+
+    console.error(
+        "YouTube error:",
+        event.data
+    );
+
+
+    /*
+        Error codes commonly encountered here:
+
+        2    Invalid parameter
+        5    HTML5 player error
+        100  Video unavailable
+        101  Embedding not allowed
+        150  Embedding not allowed
+
+        If one playlist item cannot be played,
+        skip it instead of killing the jukebox.
+    */
+
+    if (
+        event.data === 100 ||
+        event.data === 101 ||
+        event.data === 150
+    ) {
+
+        console.log(
+            "Skipping unavailable video."
+        );
+
+        setTimeout(
+            () => player.nextVideo(),
+            500
+        );
+
+    }
+
+}
