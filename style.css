@@ -1,256 +1,631 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap');
+
 :root {
-  --amber: #e08a3c;
-  --rust: #b8452f;
-  --cream: #f4e3c8;
-  --glass-border: rgba(255,255,255,0.35);
-  --glass-fill: rgba(30, 14, 10, 0.35);
+    --glass-bg: rgba(20, 20, 20, 0.48);
+    --glass-border: rgba(255, 255, 255, 0.16);
+    --text: #ffffff;
+    --muted: rgba(255, 255, 255, 0.62);
+    --green: #48e37d;
 }
 
-* { box-sizing: border-box; }
-
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: 'Manrope', sans-serif;
-  color: var(--cream);
-  overflow: hidden; /* kiosk view: no scrolling, fits at 100% zoom */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-.bg-layer {
-  position: fixed;
-  inset: 0;
-  background: url('background.png') center center / cover no-repeat;
-  z-index: -2;
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #111;
 }
 
-.bg-vignette {
-  position: fixed;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, rgba(10,5,3,0.55) 0%, rgba(10,5,3,0.05) 22%, rgba(10,5,3,0.05) 65%, rgba(10,5,3,0.75) 100%);
-  z-index: -1;
+body {
+    font-family:
+        "Noto Sans Malayalam",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    color: var(--text);
 }
 
-/* ---------- Top bar: clock + online badge ---------- */
-.top-bar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: clamp(10px, 2vh, 20px) clamp(14px, 3vw, 32px);
-  z-index: 5;
-  font-weight: 700;
+button {
+    font: inherit;
 }
+
+.scene {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+/* --------------------------------------------------
+   BACKGROUND
+-------------------------------------------------- */
+
+.background {
+    position: absolute;
+    inset: 0;
+
+    background-image: url("background.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    transform: scale(1.015);
+
+    z-index: 0;
+}
+
+.vignette {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(0, 0, 0, 0.05) 0%,
+            rgba(0, 0, 0, 0.20) 48%,
+            rgba(0, 0, 0, 0.62) 100%
+        );
+
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* --------------------------------------------------
+   CLOCK
+-------------------------------------------------- */
 
 .clock {
-  font-size: clamp(14px, 2.2vw, 18px);
-  letter-spacing: 0.03em;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    position: absolute;
+
+    top: max(24px, env(safe-area-inset-top));
+    left: max(24px, env(safe-area-inset-left));
+
+    z-index: 10;
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    letter-spacing: 0.02em;
+
+    color: rgba(255, 255, 255, 0.88);
+
+    text-shadow:
+        0 2px 15px rgba(0, 0, 0, 0.55);
 }
 
-.online-badge {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(20,10,6,0.4);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.25);
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: clamp(12px, 1.8vw, 14px);
+/* --------------------------------------------------
+   ONLINE
+-------------------------------------------------- */
+
+.online {
+    position: absolute;
+
+    top: max(24px, env(safe-area-inset-top));
+    right: max(24px, env(safe-area-inset-right));
+
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    height: 30px;
+    padding: 0 11px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+
+    background: rgba(0, 0, 0, 0.22);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+
+    font-size: 12px;
+
+    color: rgba(255, 255, 255, 0.78);
+
+    text-shadow:
+        0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #3ddc6f;
-  box-shadow: 0 0 8px #3ddc6f;
-  animation: pulse 2s infinite ease-in-out;
+.online-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--green);
+
+    box-shadow:
+        0 0 0 0 rgba(72, 227, 125, 0.55);
+
+    animation: onlinePulse 2s infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+.online-label {
+    color: rgba(255, 255, 255, 0.52);
 }
 
-/* ---------- Title ---------- */
-.title-wrap {
-  position: fixed;
-  top: clamp(48px, 8vh, 78px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(360px, 46vw);
-  text-align: center;
-  z-index: 4;
-  pointer-events: none;
+@keyframes onlinePulse {
+
+    0% {
+        box-shadow:
+            0 0 0 0 rgba(72, 227, 125, 0.55);
+    }
+
+    70% {
+        box-shadow:
+            0 0 0 7px rgba(72, 227, 125, 0);
+    }
+
+    100% {
+        box-shadow:
+            0 0 0 0 rgba(72, 227, 125, 0);
+    }
 }
 
-.title-img {
-  width: 100%;
-  display: block;
-  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.6));
+/* --------------------------------------------------
+   TITLE
+-------------------------------------------------- */
+
+.site-title {
+    position: absolute;
+
+    z-index: 5;
+
+    top: 11%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: min(460px, 58vw);
+    height: auto;
+
+    object-fit: contain;
+
+    filter:
+        drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
+
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
-/* ---------- Center stage (login only) ---------- */
-.stage {
-  height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 16px;
+/* --------------------------------------------------
+   START SCREEN
+-------------------------------------------------- */
+
+.start-screen {
+    position: absolute;
+    inset: 0;
+
+    z-index: 20;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        opacity 0.7s ease,
+        visibility 0.7s ease;
 }
 
-.glass {
-  background: var(--glass-fill);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.2);
+.start-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
-.login-card {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(340px, 88vw);
-  padding: 28px 24px;
-  border-radius: 24px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-  z-index: 8;
+.start-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-width: 150px;
+    height: 54px;
+
+    padding: 0 24px;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+
+    background:
+        rgba(20, 20, 20, 0.42);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
-.login-copy {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
+.start-button:hover {
+    transform: translateY(-2px);
+
+    background:
+        rgba(30, 30, 30, 0.58);
+
+    border-color:
+        rgba(255, 255, 255, 0.4);
 }
 
-.btn {
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-  font-weight: 700;
+.start-button:active {
+    transform: scale(0.97);
 }
 
-.btn.primary {
-  background: linear-gradient(135deg, var(--amber), var(--rust));
-  color: #fff8ee;
-  padding: 12px 26px;
-  border-radius: 999px;
-  font-size: 14px;
-  box-shadow: 0 6px 20px rgba(184,69,47,0.45);
-  transition: transform 0.15s ease;
-}
-.btn.primary:hover { transform: translateY(-2px); }
-
-/* ---------- YouTube player, hidden off-screen (audio only) ---------- */
-.yt-host {
-  position: fixed;
-  top: -9999px;
-  left: -9999px;
-  width: 300px;
-  height: 200px;
-  pointer-events: none;
+.start-icon {
+    font-size: 13px;
 }
 
-/* ---------- Bottom horizontal player pill ---------- */
+.start-hint {
+    margin-top: 14px;
+
+    color: rgba(255, 255, 255, 0.55);
+
+    font-size: 12px;
+
+    text-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* --------------------------------------------------
+   YOUTUBE PLAYER
+-------------------------------------------------- */
+
+/*
+    The player remains mounted because some browsers are
+    unhappy when an iframe is display:none.
+
+    It is placed far outside the viewport.
+*/
+
+#youtube-player {
+    position: fixed;
+
+    width: 200px;
+    height: 200px;
+
+    left: -10000px;
+    top: -10000px;
+
+    z-index: -100;
+}
+
+/* --------------------------------------------------
+   PLAYER
+-------------------------------------------------- */
+
+.player-container {
+    position: absolute;
+
+    z-index: 15;
+
+    left: 50%;
+    bottom: max(25px, env(safe-area-inset-bottom));
+
+    transform: translateX(-50%);
+
+    width: min(650px, calc(100vw - 32px));
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+
+.player-container.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .player-bar {
-  position: fixed;
-  left: 50%;
-  bottom: clamp(16px, 4vh, 36px);
-  transform: translateX(-50%);
-  width: min(460px, 92vw);
-  border-radius: 999px;
-  padding: 8px 10px 8px 8px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  z-index: 6;
-  background: linear-gradient(120deg, rgba(184,69,47,0.55), rgba(30,14,10,0.55));
+    display: flex;
+    align-items: center;
+
+    min-height: 78px;
+
+    padding: 10px 12px 10px 10px;
+
+    border:
+        1px solid var(--glass-border);
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.13),
+            rgba(255, 255, 255, 0.045)
+        );
+
+    backdrop-filter: blur(22px) saturate(130%);
+    -webkit-backdrop-filter: blur(22px) saturate(130%);
+
+    box-shadow:
+        0 18px 60px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.art-frame {
-  flex: 0 0 auto;
-  width: clamp(48px, 7vw, 64px);
-  height: clamp(48px, 7vw, 64px);
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-  background: rgba(0,0,0,0.3);
+/* --------------------------------------------------
+   THUMBNAIL
+-------------------------------------------------- */
+
+.thumbnail-wrapper {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    width: 58px;
+    height: 58px;
+
+    overflow: hidden;
+
+    border-radius: 15px;
+
+    background: rgba(0, 0, 0, 0.25);
+
+    box-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.25);
 }
 
-.album-art { width: 100%; height: 100%; object-fit: cover; display: block; }
+.song-thumbnail {
+    display: block;
 
-.track-meta {
-  flex: 1 1 auto;
-  min-width: 0;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    opacity: 0;
+
+    transition: opacity 0.3s ease;
 }
 
-.track-name {
-  margin: 0;
-  font-size: clamp(13px, 1.8vw, 16px);
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.song-thumbnail.loaded {
+    opacity: 1;
 }
+
+.thumbnail-placeholder {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(255, 255, 255, 0.65);
+
+    font-size: 25px;
+}
+
+.song-thumbnail.loaded + .thumbnail-placeholder {
+    display: none;
+}
+
+/* --------------------------------------------------
+   SONG INFO
+-------------------------------------------------- */
+
+.song-info {
+    min-width: 0;
+
+    flex: 1;
+
+    padding: 0 18px;
+}
+
+.song-label {
+    margin-bottom: 4px;
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.song-title {
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    color: rgba(255, 255, 255, 0.93);
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* --------------------------------------------------
+   CONTROLS
+-------------------------------------------------- */
 
 .controls {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    flex: 0 0 auto;
 }
 
-.control {
-  width: clamp(34px, 5vw, 40px);
-  height: clamp(34px, 5vw, 40px);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.16);
-  border: 1px solid rgba(255,255,255,0.3);
-  color: var(--cream);
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-.control:hover { background: rgba(255,255,255,0.28); transform: translateY(-1px); }
+.control-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.control-main {
-  width: clamp(44px, 6.5vw, 52px);
-  height: clamp(44px, 6.5vw, 52px);
-  background: #fff;
-  color: #7a2c1a;
-  border: none;
-}
-.control-main:hover { background: #fff; transform: translateY(-1px) scale(1.04); }
+    width: 42px;
+    height: 42px;
 
-.hidden { display: none !important; }
+    border: none;
+    border-radius: 50%;
 
-.status-line {
-  position: fixed;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  font-size: 11px;
-  color: rgba(244, 227, 200, 0.7);
-  z-index: 9;
-  text-align: center;
-  max-width: 90vw;
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    color: white;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
-@media (max-width: 520px) {
-  .title-wrap { width: min(300px, 62vw); top: 40px; }
-  .player-bar { bottom: 14px; padding: 6px 8px 6px 6px; gap: 10px; }
+.control-button:hover {
+    background:
+        rgba(255, 255, 255, 0.16);
+
+    transform: scale(1.05);
+}
+
+.control-button:active {
+    transform: scale(0.94);
+}
+
+.play-button {
+    font-size: 13px;
+}
+
+.next-button {
+    gap: 0;
+
+    font-size: 10px;
+    letter-spacing: -3px;
+
+    padding-right: 4px;
+}
+
+/* --------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .clock {
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
+
+        font-size: 13px;
+    }
+
+    .online {
+        top: max(18px, env(safe-area-inset-top));
+        right: max(18px, env(safe-area-inset-right));
+
+        height: 27px;
+
+        padding: 0 9px;
+
+        font-size: 11px;
+    }
+
+    .site-title {
+        top: 12%;
+
+        width: min(330px, 76vw);
+    }
+
+    .start-button {
+        min-width: 140px;
+        height: 50px;
+
+        font-size: 15px;
+    }
+
+    .start-hint {
+        font-size: 11px;
+    }
+
+    .player-container {
+        width: calc(100vw - 20px);
+
+        bottom:
+            max(12px, env(safe-area-inset-bottom));
+    }
+
+    .player-bar {
+        min-height: 68px;
+
+        padding: 8px;
+        border-radius: 20px;
+    }
+
+    .thumbnail-wrapper {
+        width: 50px;
+        height: 50px;
+
+        border-radius: 13px;
+    }
+
+    .song-info {
+        padding: 0 12px;
+    }
+
+    .song-label {
+        font-size: 9px;
+    }
+
+    .song-title {
+        font-size: 13px;
+    }
+
+    .control-button {
+        width: 38px;
+        height: 38px;
+    }
+
+}
+
+@media (max-height: 600px) {
+
+    .site-title {
+        top: 7%;
+        width: min(300px, 42vw);
+    }
+
+    .player-container {
+        bottom: 12px;
+    }
+
 }
