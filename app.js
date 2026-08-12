@@ -139,9 +139,7 @@ window.onYouTubeIframeAPIReady = function () {
 
                 modestbranding: 1,
 
-                listType: "playlist",
-
-                list: PLAYLIST_ID,
+             videoId: "dQw4w9WgXcQ",
 
                 origin:
                     window.location.origin
