@@ -1,44 +1,81 @@
+/* =========================================================
+   പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി
+   YouTube Music Jukebox
+========================================================= */
+
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
 const PLAYLIST_ID =
     "PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD";
 
+
+/* =========================================================
+   GLOBAL PLAYER STATE
+========================================================= */
+
 let player = null;
+
 let playerReady = false;
-let playlistLoaded = false;
+
+let started = false;
 
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
+/* =========================================================
+   DOM ELEMENTS
+========================================================= */
 
 const startScreen =
-    document.getElementById("start-screen");
+    document.getElementById(
+        "start-screen"
+    );
 
 const startButton =
-    document.getElementById("start-button");
+    document.getElementById(
+        "start-button"
+    );
 
 const musicPlayer =
-    document.getElementById("music-player");
+    document.getElementById(
+        "music-player"
+    );
 
 const playPause =
-    document.getElementById("play-pause");
+    document.getElementById(
+        "play-pause"
+    );
 
 const nextButton =
-    document.getElementById("next");
+    document.getElementById(
+        "next"
+    );
 
 const trackTitle =
-    document.getElementById("track-title");
+    document.getElementById(
+        "track-title"
+    );
 
 const albumArt =
-    document.getElementById("album-art");
+    document.getElementById(
+        "album-art"
+    );
 
 const albumPlaceholder =
-    document.getElementById("album-placeholder");
+    document.getElementById(
+        "album-placeholder"
+    );
 
 const clock =
-    document.getElementById("clock");
+    document.getElementById(
+        "clock"
+    );
 
 const onlineNumber =
-    document.getElementById("online-number");
+    document.getElementById(
+        "online-number"
+    );
 
 
 console.log(
@@ -46,156 +83,177 @@ console.log(
 );
 
 
-/* =====================================================
+/* =========================================================
    CLOCK
-===================================================== */
+========================================================= */
 
 function updateClock() {
 
-    if (!clock) return;
+    if (!clock) {
+        return;
+    }
 
-    const now = new Date();
 
-    let hours = now.getHours();
+    const now =
+        new Date();
+
+
+    let hours =
+        now.getHours();
+
 
     const minutes =
-        String(now.getMinutes())
-            .padStart(2, "0");
+        String(
+            now.getMinutes()
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     const suffix =
-        hours >= 12 ? "pm" : "am";
+        hours >= 12
+            ? "pm"
+            : "am";
 
-    hours %= 12;
+
+    hours =
+        hours % 12;
+
 
     if (hours === 0) {
         hours = 12;
     }
 
+
     clock.textContent =
         `${hours}:${minutes} ${suffix}`;
 }
 
+
 updateClock();
 
-setInterval(updateClock, 1000);
+
+setInterval(
+    updateClock,
+    1000
+);
 
 
-/* =====================================================
+/* =========================================================
    DECORATIVE ONLINE COUNT
-===================================================== */
+========================================================= */
 
 let listeners = 128;
 
-setInterval(() => {
 
-    if (!onlineNumber) return;
+function updateListeners() {
+
+    if (!onlineNumber) {
+        return;
+    }
+
 
     listeners +=
-        Math.floor(Math.random() * 3) - 1;
+        Math.floor(
+            Math.random() * 3
+        ) - 1;
+
 
     listeners =
         Math.max(
             121,
-            Math.min(136, listeners)
+            Math.min(
+                136,
+                listeners
+            )
         );
+
 
     onlineNumber.textContent =
         listeners;
-
-}, 6000);
-
-
-/* =====================================================
-   YOUTUBE API
-===================================================== */
-
-window.onYouTubeIframeAPIReady = function () {
-
-    console.log(
-        "YouTube IFrame API loaded."
-    );
+}
 
 
-    player = new YT.Player(
-        "youtube-player",
-        {
-
-            width: "1",
-            height: "1",
-
-            playerVars: {
-
-                autoplay: 0,
-
-                controls: 0,
-
-                disablekb: 1,
-
-                fs: 0,
-
-                playsinline: 1,
-
-                rel: 0,
-
-                modestbranding: 1,
-
-             videoId: "dQw4w9WgXcQ",
-
-                origin:
-                    window.location.origin
-            },
-
-            events: {
-
-                onReady:
-                    onPlayerReady,
-
-                onStateChange:
-                    onPlayerStateChange,
-
-                onError:
-                    onPlayerError
-            }
-        }
-    );
+setInterval(
+    updateListeners,
+    6000
+);
 
 
-    /*
-     * Give YouTube time to create the iframe,
-     * then explicitly tell the browser which
-     * referrer policy to use.
-     */
+/* =========================================================
+   YOUTUBE IFRAME API
+========================================================= */
 
-    setTimeout(() => {
+/*
+    IMPORTANT:
+
+    index.html loads this app.js BEFORE the YouTube API.
+
+    Therefore this callback already exists when YouTube
+    calls window.onYouTubeIframeAPIReady().
+*/
+
+window.onYouTubeIframeAPIReady =
+    function () {
+
+        console.log(
+            "YouTube IFrame API loaded."
+        );
+
 
         const iframe =
-            document.querySelector(
-                "#youtube-player iframe"
+            document.getElementById(
+                "youtube-player"
             );
 
-        if (iframe) {
 
-            iframe.setAttribute(
-                "referrerpolicy",
-                "strict-origin-when-cross-origin"
+        if (!iframe) {
+
+            console.error(
+                "YouTube iframe not found."
             );
 
-            iframe.setAttribute(
-                "allow",
-                "autoplay; encrypted-media"
-            );
-
-            console.log(
-                "YouTube iframe configured."
-            );
-
+            return;
         }
 
-    }, 1000);
-};
-/* =====================================================
+
+        console.log(
+            "YouTube iframe found."
+        );
+
+
+        /*
+         * Connect the IFrame API to the existing iframe.
+         */
+
+        player =
+            new YT.Player(
+                iframe,
+                {
+
+                    events: {
+
+                        onReady:
+                            onPlayerReady,
+
+                        onStateChange:
+                            onPlayerStateChange,
+
+                        onError:
+                            onPlayerError
+
+                    }
+
+                }
+            );
+
+    };
+
+
+/* =========================================================
    PLAYER READY
-===================================================== */
+========================================================= */
 
 function onPlayerReady() {
 
@@ -203,47 +261,32 @@ function onPlayerReady() {
         "YouTube player ready."
     );
 
+
     playerReady = true;
 
 
     /*
-     * THIS IS THE IMPORTANT PART.
+     * The playlist is already specified in the iframe URL:
      *
-     * We use the object syntax because PLAYLIST_ID
-     * is a playlist ID, not an array of video IDs.
+     * /embed/videoseries?list=...
+     *
+     * Therefore we don't call loadPlaylist().
      */
 
-    console.log(
-        "Loading playlist:",
-        PLAYLIST_ID
+    setTimeout(
+        function () {
+
+            updateTrackInformation();
+
+        },
+        1000
     );
-
-
-    try {
-
-        player.cuePlaylist({
-
-            listType: "playlist",
-
-            list: PLAYLIST_ID,
-
-            index: 0
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "Playlist loading exception:",
-            error
-        );
-    }
 }
 
 
-/* =====================================================
-   START
-===================================================== */
+/* =========================================================
+   START BUTTON
+========================================================= */
 
 if (startButton) {
 
@@ -256,14 +299,20 @@ if (startButton) {
             );
 
 
-            if (!playerReady || !player) {
+            if (
+                !playerReady ||
+                !player
+            ) {
 
                 console.warn(
-                    "Player is not ready."
+                    "YouTube player is not ready yet."
                 );
 
                 return;
             }
+
+
+            started = true;
 
 
             console.log(
@@ -272,12 +321,17 @@ if (startButton) {
 
 
             /*
-             * If the playlist has successfully cued,
-             * this starts the first track.
+             * This is executed directly from the
+             * user's click, allowing browser audio
+             * playback.
              */
 
             player.playVideo();
 
+
+            /*
+             * Hide the landing screen.
+             */
 
             if (startScreen) {
 
@@ -286,6 +340,10 @@ if (startButton) {
                 );
             }
 
+
+            /*
+             * Show the glass player.
+             */
 
             if (musicPlayer) {
 
@@ -299,14 +357,16 @@ if (startButton) {
                 updateTrackInformation,
                 1000
             );
+
         }
     );
+
 }
 
 
-/* =====================================================
+/* =========================================================
    PLAY / PAUSE
-===================================================== */
+========================================================= */
 
 if (playPause) {
 
@@ -314,7 +374,11 @@ if (playPause) {
         "click",
         function () {
 
-            if (!playerReady || !player) {
+            if (
+                !playerReady ||
+                !player
+            ) {
+
                 return;
             }
 
@@ -324,25 +388,34 @@ if (playPause) {
 
 
             if (
-                state === YT.PlayerState.PLAYING ||
-                state === YT.PlayerState.BUFFERING
+
+                state ===
+                    YT.PlayerState.PLAYING ||
+
+                state ===
+                    YT.PlayerState.BUFFERING
+
             ) {
 
                 player.pauseVideo();
 
-            } else {
+            }
+
+            else {
 
                 player.playVideo();
 
             }
+
         }
     );
+
 }
 
 
-/* =====================================================
-   NEXT
-===================================================== */
+/* =========================================================
+   NEXT SONG
+========================================================= */
 
 if (nextButton) {
 
@@ -350,7 +423,11 @@ if (nextButton) {
         "click",
         function () {
 
-            if (!playerReady || !player) {
+            if (
+                !playerReady ||
+                !player
+            ) {
+
                 return;
             }
 
@@ -367,16 +444,20 @@ if (nextButton) {
                 updateTrackInformation,
                 1000
             );
+
         }
     );
+
 }
 
 
-/* =====================================================
-   PLAYER STATE
-===================================================== */
+/* =========================================================
+   YOUTUBE PLAYER STATE
+========================================================= */
 
-function onPlayerStateChange(event) {
+function onPlayerStateChange(
+    event
+) {
 
     console.log(
         "Player state:",
@@ -384,16 +465,27 @@ function onPlayerStateChange(event) {
     );
 
 
-    switch (event.data) {
+    switch (
+        event.data
+    ) {
+
+
+        /* ---------------------------------------------
+           UNSTARTED
+        --------------------------------------------- */
 
         case YT.PlayerState.UNSTARTED:
 
             console.log(
-                "Playlist/player initializing..."
+                "YouTube playlist initializing..."
             );
 
             break;
 
+
+        /* ---------------------------------------------
+           CUED
+        --------------------------------------------- */
 
         case YT.PlayerState.CUED:
 
@@ -401,76 +493,132 @@ function onPlayerStateChange(event) {
                 "Playlist successfully cued."
             );
 
-            playlistLoaded = true;
 
             updateTrackInformation();
 
             break;
 
+
+        /* ---------------------------------------------
+           PLAYING
+        --------------------------------------------- */
 
         case YT.PlayerState.PLAYING:
 
             console.log(
-                "Playing."
+                "PLAYING"
             );
 
+
             if (playPause) {
-                playPause.textContent = "Ⅱ";
+
+                playPause.textContent =
+                    "Ⅱ";
             }
+
 
             updateTrackInformation();
 
             break;
 
 
+        /* ---------------------------------------------
+           PAUSED
+        --------------------------------------------- */
+
         case YT.PlayerState.PAUSED:
 
             console.log(
-                "Paused."
+                "PAUSED"
             );
 
+
             if (playPause) {
-                playPause.textContent = "▶";
+
+                playPause.textContent =
+                    "▶";
             }
+
 
             break;
 
+
+        /* ---------------------------------------------
+           BUFFERING
+        --------------------------------------------- */
 
         case YT.PlayerState.BUFFERING:
 
             console.log(
-                "Buffering..."
+                "BUFFERING"
             );
 
             break;
 
+
+        /* ---------------------------------------------
+           ENDED
+        --------------------------------------------- */
 
         case YT.PlayerState.ENDED:
 
             console.log(
-                "Track ended."
+                "Track ended. Moving to next..."
             );
 
-            player.nextVideo();
+
+            /*
+             * Automatically continue through
+             * the playlist.
+             */
+
+            if (player) {
+
+                player.nextVideo();
+
+            }
 
             break;
+
     }
+
 }
 
 
-/* =====================================================
+/* =========================================================
    TRACK INFORMATION
-===================================================== */
+========================================================= */
 
 function updateTrackInformation() {
 
-    if (!playerReady || !player) {
+    if (
+        !playerReady ||
+        !player
+    ) {
+
         return;
     }
 
 
-    const data =
-        player.getVideoData();
+    let data;
+
+
+    try {
+
+        data =
+            player.getVideoData();
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "Could not get YouTube video data.",
+            error
+        );
+
+        return;
+    }
 
 
     if (!data) {
@@ -484,6 +632,10 @@ function updateTrackInformation() {
     );
 
 
+    /*
+     * Song title
+     */
+
     if (
         trackTitle &&
         data.title
@@ -494,27 +646,36 @@ function updateTrackInformation() {
     }
 
 
-    if (data.video_id) {
+    /*
+     * Thumbnail
+     */
+
+    if (
+        data.video_id
+    ) {
 
         updateThumbnail(
             data.video_id
         );
     }
+
 }
 
 
-/* =====================================================
+/* =========================================================
    THUMBNAIL
-===================================================== */
+========================================================= */
 
-function updateThumbnail(videoId) {
+function updateThumbnail(
+    videoId
+) {
 
     if (!albumArt) {
         return;
     }
 
 
-    const url =
+    const thumbnailURL =
         `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
 
@@ -537,23 +698,38 @@ function updateThumbnail(videoId) {
                 "loaded"
             );
 
+
             if (albumPlaceholder) {
 
                 albumPlaceholder.style.display =
                     "none";
             }
+
         };
 
 
-    albumArt.src = url;
+    albumArt.onerror =
+        function () {
+
+            console.warn(
+                "YouTube thumbnail unavailable."
+            );
+
+        };
+
+
+    albumArt.src =
+        thumbnailURL;
 }
 
 
-/* =====================================================
-   YOUTUBE ERROR
-===================================================== */
+/* =========================================================
+   YOUTUBE ERROR HANDLER
+========================================================= */
 
-function onPlayerError(event) {
+function onPlayerError(
+    event
+) {
 
     console.error(
         "YouTube error code:",
@@ -562,26 +738,16 @@ function onPlayerError(event) {
 
 
     /*
-     * Error 2:
-     * Invalid parameter.
-     *
-     * If we get this here, YouTube has rejected
-     * the supplied playlist ID.
+     * 2
+     * Invalid parameter
      */
 
-    if (event.data === 2) {
+    if (
+        event.data === 2
+    ) {
 
         console.error(
-            "YouTube rejected the playlist ID."
-        );
-
-        console.error(
-            "Playlist:",
-            PLAYLIST_ID
-        );
-
-        console.error(
-            "This is no longer an autoplay/origin problem."
+            "YouTube rejected the player configuration."
         );
 
         return;
@@ -589,17 +755,40 @@ function onPlayerError(event) {
 
 
     /*
-     * Skip unavailable videos.
+     * 5
+     * HTML5 player error
      */
 
     if (
+        event.data === 5
+    ) {
+
+        console.error(
+            "YouTube HTML5 player error."
+        );
+
+        return;
+    }
+
+
+    /*
+     * 100
+     * Video unavailable
+     *
+     * 101 / 150
+     * Embedding disabled
+     */
+
+    if (
+
         event.data === 100 ||
         event.data === 101 ||
         event.data === 150
+
     ) {
 
-        console.log(
-            "Skipping unavailable video."
+        console.warn(
+            "This track cannot be embedded. Skipping..."
         );
 
 
@@ -607,43 +796,15 @@ function onPlayerError(event) {
             function () {
 
                 if (player) {
+
                     player.nextVideo();
+
                 }
 
             },
             700
         );
+
     }
+
 }
-setTimeout(() => {
-
-    const youtubeIframe =
-        document.querySelector(
-            "#youtube-player iframe"
-        );
-
-    if (youtubeIframe) {
-
-        youtubeIframe.setAttribute(
-            "referrerpolicy",
-            "strict-origin-when-cross-origin"
-        );
-
-        youtubeIframe.setAttribute(
-            "allow",
-            "autoplay; encrypted-media"
-        );
-
-        console.log(
-            "YouTube iframe referrer policy configured."
-        );
-
-    } else {
-
-        console.warn(
-            "YouTube iframe not found yet."
-        );
-
-    }
-
-}, 2000);
