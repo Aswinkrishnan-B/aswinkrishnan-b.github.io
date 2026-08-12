@@ -484,3 +484,46 @@ function onPlayerError(event) {
         );
     }
 }
+const mysticalVideo =
+    document.getElementById("mystical-video");
+
+if (mysticalVideo) {
+
+    mysticalVideo.muted = true;
+
+    mysticalVideo.loop = true;
+
+    mysticalVideo.playsInline = true;
+
+
+    const startMysticalVideo = () => {
+
+        const promise =
+            mysticalVideo.play();
+
+        if (promise !== undefined) {
+
+            promise.catch(() => {
+
+                console.log(
+                    "Mystical video waiting for user interaction."
+                );
+
+            });
+
+        }
+    };
+
+
+    startMysticalVideo();
+
+
+    document.addEventListener(
+        "click",
+        startMysticalVideo,
+        {
+            once: true
+        }
+    );
+
+}
