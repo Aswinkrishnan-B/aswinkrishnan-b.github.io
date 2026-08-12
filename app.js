@@ -1,51 +1,52 @@
-const PLAYLIST_ID = "PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD";
+const PLAYLIST_ID =
+    "PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD";
 
 let player = null;
 let playerReady = false;
 
 
 /* =====================================================
-   GET ELEMENTS SAFELY
+   ELEMENTS
 ===================================================== */
 
-const startScreen = document.getElementById("start-screen");
-const startButton = document.getElementById("start-button");
+const startScreen =
+    document.getElementById("start-screen");
 
-const musicPlayer = document.getElementById("music-player");
+const startButton =
+    document.getElementById("start-button");
 
-const playPause = document.getElementById("play-pause");
-const nextButton = document.getElementById("next");
+const musicPlayer =
+    document.getElementById("music-player");
 
-const trackTitle = document.getElementById("track-title");
+const playPause =
+    document.getElementById("play-pause");
 
-const albumArt = document.getElementById("album-art");
-const albumPlaceholder = document.getElementById("album-placeholder");
+const nextButton =
+    document.getElementById("next");
 
-const clock = document.getElementById("clock");
-const onlineNumber = document.getElementById("online-number");
+const trackTitle =
+    document.getElementById("track-title");
 
-const titleImage = document.getElementById("title-image");
+const albumArt =
+    document.getElementById("album-art");
+
+const albumPlaceholder =
+    document.getElementById("album-placeholder");
+
+const clock =
+    document.getElementById("clock");
+
+const onlineNumber =
+    document.getElementById("online-number");
 
 
 /* =====================================================
-   DEBUGGING
+   STARTUP
 ===================================================== */
 
-console.log("Private Bus Paattu Petti starting...");
-
-console.log({
-    startScreen,
-    startButton,
-    musicPlayer,
-    playPause,
-    nextButton,
-    trackTitle,
-    albumArt,
-    albumPlaceholder,
-    clock,
-    onlineNumber,
-    titleImage
-});
+console.log(
+    "Private Bus Paattu Petti starting..."
+);
 
 
 /* =====================================================
@@ -61,7 +62,8 @@ function updateClock() {
     let hours = now.getHours();
 
     const minutes =
-        String(now.getMinutes()).padStart(2, "0");
+        String(now.getMinutes())
+            .padStart(2, "0");
 
     const suffix =
         hours >= 12 ? "pm" : "am";
@@ -78,16 +80,19 @@ function updateClock() {
 
 updateClock();
 
-setInterval(updateClock, 1000);
+setInterval(
+    updateClock,
+    1000
+);
 
 
 /* =====================================================
-   DECORATIVE ONLINE COUNT
+   FAKE ONLINE COUNT
 ===================================================== */
 
 let listeners = 128;
 
-function updateListeners() {
+setInterval(() => {
 
     if (!onlineNumber) return;
 
@@ -102,60 +107,123 @@ function updateListeners() {
 
     onlineNumber.textContent =
         listeners;
-}
 
-setInterval(updateListeners, 6000);
+}, 6000);
 
 
 /* =====================================================
-   TITLE FALLBACK
+   YOUTUBE API
 ===================================================== */
 
-if (titleImage) {
+window.onYouTubeIframeAPIReady = function () {
 
-    titleImage.addEventListener(
-        "error",
-        function () {
-
-            console.error(
-                "title.png could not be loaded."
-            );
-
-            titleImage.style.display = "none";
-
-            const fallback =
-                document.createElement("div");
-
-            fallback.textContent =
-                "പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി";
-
-            fallback.style.position = "absolute";
-            fallback.style.zIndex = "10";
-            fallback.style.top = "10%";
-            fallback.style.left = "50%";
-            fallback.style.transform =
-                "translateX(-50%)";
-
-            fallback.style.width = "90%";
-
-            fallback.style.textAlign = "center";
-
-            fallback.style.color = "white";
-
-            fallback.style.fontSize =
-                "clamp(30px, 6vw, 70px)";
-
-            fallback.style.fontWeight = "700";
-
-            fallback.style.textShadow =
-                "0 4px 20px rgba(0,0,0,.8)";
-
-            document
-                .getElementById("app")
-                ?.appendChild(fallback);
-        }
+    console.log(
+        "YouTube IFrame API loaded."
     );
 
+
+    player = new YT.Player(
+        "youtube-player",
+        {
+
+            /*
+             * The player itself is essentially invisible.
+             */
+
+            width: "1",
+            height: "1",
+
+
+            /*
+             * IMPORTANT:
+             *
+             * Load the playlist HERE rather than calling
+             * loadPlaylist() after initialization.
+             */
+
+            playerVars: {
+
+                autoplay: 0,
+
+                controls: 0,
+
+                disablekb: 1,
+
+                fs: 0,
+
+                playsinline: 1,
+
+                rel: 0,
+
+                /*
+                 * Playlist
+                 */
+
+                listType: "playlist",
+
+                list: PLAYLIST_ID,
+
+                /*
+                 * Required/recommended origin for the
+                 * IFrame API.
+                 */
+
+                origin: window.location.origin
+            },
+
+
+            events: {
+
+                onReady:
+                    onPlayerReady,
+
+                onStateChange:
+                    onPlayerStateChange,
+
+                onError:
+                    onPlayerError,
+
+                onAutoplayBlocked:
+                    onAutoplayBlocked
+            }
+        }
+    );
+};
+
+
+/* =====================================================
+   PLAYER READY
+===================================================== */
+
+function onPlayerReady() {
+
+    console.log(
+        "YouTube player ready."
+    );
+
+    playerReady = true;
+
+
+    /*
+     * We deliberately DO NOT call:
+     *
+     * player.loadPlaylist(...)
+     *
+     * here.
+     *
+     * The playlist was already supplied in playerVars.
+     */
+
+
+    /*
+     * Give YouTube a moment to cue the first video,
+     * then inspect it.
+     */
+
+    setTimeout(
+        updateTrackInformation,
+        1200
+    );
 }
 
 
@@ -169,136 +237,64 @@ if (startButton) {
         "click",
         function () {
 
-            console.log("Start button clicked.");
+            console.log(
+                "Start button clicked."
+            );
 
-            if (!playerReady) {
 
-                console.log(
-                    "YouTube player is not ready yet."
+            if (!playerReady || !player) {
+
+                console.warn(
+                    "YouTube player is not ready."
                 );
 
                 return;
             }
 
-            startMusic();
-        }
-    );
 
-}
-
-
-/* =====================================================
-   START MUSIC
-===================================================== */
-
-function startMusic() {
-
-    if (!player) {
-
-        console.error(
-            "YouTube player does not exist."
-        );
-
-        return;
-    }
-
-    console.log("Starting music...");
-
-    player.playVideo();
+            console.log(
+                "Starting music..."
+            );
 
 
-    if (startScreen) {
-        startScreen.classList.add("hidden");
-    }
+            /*
+             * This is called directly as the result
+             * of the user's click, so browser autoplay
+             * policy should permit it.
+             */
 
-    if (musicPlayer) {
-        musicPlayer.classList.add("visible");
-    }
-
-
-    setTimeout(
-        updateTrackInformation,
-        1000
-    );
-}
+            player.playVideo();
 
 
-/* =====================================================
-   YOUTUBE API
-===================================================== */
+            /*
+             * Remove start screen.
+             */
 
-/*
-    YouTube automatically calls this function after
-    https://www.youtube.com/iframe_api loads.
-*/
+            if (startScreen) {
 
-window.onYouTubeIframeAPIReady = function () {
-
-    console.log(
-        "YouTube IFrame API loaded."
-    );
-
-
-    player =
-        new YT.Player(
-            "youtube-player",
-            {
-
-                width: "1",
-                height: "1",
-
-                playerVars: {
-
-                    autoplay: 0,
-
-                    controls: 0,
-
-                    disablekb: 1,
-
-                    fs: 0,
-
-                    playsinline: 1,
-
-                    rel: 0,
-
-                    modestbranding: 1
-                },
-
-                events: {
-
-                    onReady:
-                        onPlayerReady,
-
-                    onStateChange:
-                        onPlayerStateChange,
-
-                    onError:
-                        onPlayerError
-                }
+                startScreen.classList.add(
+                    "hidden"
+                );
             }
-        );
-};
 
 
-/* =====================================================
-   YOUTUBE READY
-===================================================== */
+            /*
+             * Show glass player.
+             */
 
-function onPlayerReady() {
+            if (musicPlayer) {
 
-    console.log(
-        "YouTube player ready."
-    );
+                musicPlayer.classList.add(
+                    "visible"
+                );
+            }
 
-    playerReady = true;
 
-
-    /*
-        Load the playlist.
-    */
-
-    player.loadPlaylist(
-        PLAYLIST_ID
+            setTimeout(
+                updateTrackInformation,
+                1000
+            );
+        }
     );
 }
 
@@ -313,7 +309,10 @@ if (playPause) {
         "click",
         function () {
 
-            if (!playerReady) return;
+            if (!playerReady || !player) {
+                return;
+            }
+
 
             const state =
                 player.getPlayerState();
@@ -336,7 +335,6 @@ if (playPause) {
             }
         }
     );
-
 }
 
 
@@ -350,21 +348,25 @@ if (nextButton) {
         "click",
         function () {
 
-            if (!playerReady) return;
+            if (!playerReady || !player) {
+                return;
+            }
+
 
             console.log(
-                "Skipping to next track."
+                "Next track..."
             );
+
 
             player.nextVideo();
 
+
             setTimeout(
                 updateTrackInformation,
-                800
+                1000
             );
         }
     );
-
 }
 
 
@@ -380,51 +382,96 @@ function onPlayerStateChange(event) {
     );
 
 
-    if (
-        event.data ===
-        YT.PlayerState.PLAYING
-    ) {
+    switch (event.data) {
 
-        if (playPause) {
-            playPause.textContent = "Ⅱ";
-        }
 
-        updateTrackInformation();
+        case YT.PlayerState.UNSTARTED:
+
+            console.log(
+                "Playlist/player initializing..."
+            );
+
+            break;
+
+
+        case YT.PlayerState.ENDED:
+
+            console.log(
+                "Track ended. Moving to next..."
+            );
+
+            player.nextVideo();
+
+            break;
+
+
+        case YT.PlayerState.PLAYING:
+
+            console.log(
+                "Playing."
+            );
+
+
+            if (playPause) {
+
+                playPause.textContent =
+                    "Ⅱ";
+            }
+
+
+            updateTrackInformation();
+
+            break;
+
+
+        case YT.PlayerState.PAUSED:
+
+            console.log(
+                "Paused."
+            );
+
+
+            if (playPause) {
+
+                playPause.textContent =
+                    "▶";
+            }
+
+            break;
+
+
+        case YT.PlayerState.BUFFERING:
+
+            console.log(
+                "Buffering..."
+            );
+
+            break;
+
+
+        case YT.PlayerState.CUED:
+
+            console.log(
+                "Video cued."
+            );
+
+            updateTrackInformation();
+
+            break;
     }
+}
 
 
-    else if (
-        event.data ===
-        YT.PlayerState.PAUSED
-    ) {
+/* =====================================================
+   AUTOPLAY BLOCKED
+===================================================== */
 
-        if (playPause) {
-            playPause.textContent = "▶";
-        }
+function onAutoplayBlocked() {
 
-    }
+    console.warn(
+        "YouTube autoplay was blocked."
+    );
 
-
-    else if (
-        event.data ===
-        YT.PlayerState.ENDED
-    ) {
-
-        /*
-            Automatically continue.
-        */
-
-        player.nextVideo();
-    }
-
-
-    else if (
-        event.data ===
-        YT.PlayerState.CUED
-    ) {
-
-        updateTrackInformation();
-    }
 }
 
 
@@ -434,12 +481,18 @@ function onPlayerStateChange(event) {
 
 function updateTrackInformation() {
 
-    if (!player) return;
+    if (!playerReady || !player) {
+        return;
+    }
+
 
     const data =
         player.getVideoData();
 
-    if (!data) return;
+
+    if (!data) {
+        return;
+    }
 
 
     console.log(
@@ -458,9 +511,7 @@ function updateTrackInformation() {
     }
 
 
-    if (
-        data.video_id
-    ) {
+    if (data.video_id) {
 
         updateThumbnail(
             data.video_id
@@ -475,11 +526,25 @@ function updateTrackInformation() {
 
 function updateThumbnail(videoId) {
 
-    if (!albumArt) return;
+    if (!albumArt) {
+        return;
+    }
 
 
-    const thumbnail =
+    const url =
         `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+
+    albumArt.classList.remove(
+        "loaded"
+    );
+
+
+    if (albumPlaceholder) {
+
+        albumPlaceholder.style.display =
+            "flex";
+    }
 
 
     albumArt.onload =
@@ -489,7 +554,9 @@ function updateThumbnail(videoId) {
                 "loaded"
             );
 
+
             if (albumPlaceholder) {
+
                 albumPlaceholder.style.display =
                     "none";
             }
@@ -499,19 +566,18 @@ function updateThumbnail(videoId) {
     albumArt.onerror =
         function () {
 
-            console.error(
-                "Could not load thumbnail."
+            console.warn(
+                "Thumbnail unavailable."
             );
         };
 
 
-    albumArt.src =
-        thumbnail;
+    albumArt.src = url;
 }
 
 
 /* =====================================================
-   YOUTUBE ERROR
+   YOUTUBE ERRORS
 ===================================================== */
 
 function onPlayerError(event) {
@@ -523,9 +589,12 @@ function onPlayerError(event) {
 
 
     /*
-        If a particular playlist video cannot be embedded,
-        skip it.
-    */
+     * 2   = Invalid parameter
+     * 5   = HTML5 player error
+     * 100 = Video unavailable/private
+     * 101 = Embedding prohibited
+     * 150 = Embedding prohibited
+     */
 
     if (
         event.data === 100 ||
@@ -533,10 +602,16 @@ function onPlayerError(event) {
         event.data === 150
     ) {
 
+        console.log(
+            "Skipping unavailable/non-embeddable track."
+        );
+
+
         setTimeout(
             function () {
 
                 if (player) {
+
                     player.nextVideo();
                 }
 
