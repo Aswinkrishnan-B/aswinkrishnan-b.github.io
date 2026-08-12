@@ -582,3 +582,35 @@ function onPlayerError(event) {
         );
     }
 }
+setTimeout(() => {
+
+    const youtubeIframe =
+        document.querySelector(
+            "#youtube-player iframe"
+        );
+
+    if (youtubeIframe) {
+
+        youtubeIframe.setAttribute(
+            "referrerpolicy",
+            "strict-origin-when-cross-origin"
+        );
+
+        youtubeIframe.setAttribute(
+            "allow",
+            "autoplay; encrypted-media"
+        );
+
+        console.log(
+            "YouTube iframe referrer policy configured."
+        );
+
+    } else {
+
+        console.warn(
+            "YouTube iframe not found yet."
+        );
+
+    }
+
+}, 2000);
