@@ -1,81 +1,43 @@
-/* =========================================================
-   പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി
-   YouTube Music Jukebox
-========================================================= */
-
-
-/* =========================================================
-   CONFIGURATION
-========================================================= */
-
 const PLAYLIST_ID =
-    "PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD";
-
-
-/* =========================================================
-   GLOBAL PLAYER STATE
-========================================================= */
+    "PL6P929LsnhPJIF6Iz2b8Dyz4oU84kI75F";
 
 let player = null;
-
 let playerReady = false;
 
-let started = false;
 
-
-/* =========================================================
-   DOM ELEMENTS
-========================================================= */
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
 const startScreen =
-    document.getElementById(
-        "start-screen"
-    );
+    document.getElementById("start-screen");
 
 const startButton =
-    document.getElementById(
-        "start-button"
-    );
+    document.getElementById("start-button");
 
 const musicPlayer =
-    document.getElementById(
-        "music-player"
-    );
+    document.getElementById("music-player");
 
 const playPause =
-    document.getElementById(
-        "play-pause"
-    );
+    document.getElementById("play-pause");
 
 const nextButton =
-    document.getElementById(
-        "next"
-    );
+    document.getElementById("next");
 
 const trackTitle =
-    document.getElementById(
-        "track-title"
-    );
+    document.getElementById("track-title");
 
 const albumArt =
-    document.getElementById(
-        "album-art"
-    );
+    document.getElementById("album-art");
 
 const albumPlaceholder =
-    document.getElementById(
-        "album-placeholder"
-    );
+    document.getElementById("album-placeholder");
 
 const clock =
-    document.getElementById(
-        "clock"
-    );
+    document.getElementById("clock");
 
 const onlineNumber =
-    document.getElementById(
-        "online-number"
-    );
+    document.getElementById("online-number");
 
 
 console.log(
@@ -83,56 +45,35 @@ console.log(
 );
 
 
-/* =========================================================
+/* =====================================================
    CLOCK
-========================================================= */
+===================================================== */
 
 function updateClock() {
 
-    if (!clock) {
-        return;
-    }
+    if (!clock) return;
 
+    const now = new Date();
 
-    const now =
-        new Date();
-
-
-    let hours =
-        now.getHours();
-
+    let hours = now.getHours();
 
     const minutes =
-        String(
-            now.getMinutes()
-        ).padStart(
-            2,
-            "0"
-        );
-
+        String(now.getMinutes()).padStart(2, "0");
 
     const suffix =
-        hours >= 12
-            ? "pm"
-            : "am";
+        hours >= 12 ? "pm" : "am";
 
-
-    hours =
-        hours % 12;
-
+    hours %= 12;
 
     if (hours === 0) {
         hours = 12;
     }
 
-
     clock.textContent =
         `${hours}:${minutes} ${suffix}`;
 }
 
-
 updateClock();
-
 
 setInterval(
     updateClock,
@@ -140,25 +81,18 @@ setInterval(
 );
 
 
-/* =========================================================
+/* =====================================================
    DECORATIVE ONLINE COUNT
-========================================================= */
+===================================================== */
 
 let listeners = 128;
 
+setInterval(() => {
 
-function updateListeners() {
-
-    if (!onlineNumber) {
-        return;
-    }
-
+    if (!onlineNumber) return;
 
     listeners +=
-        Math.floor(
-            Math.random() * 3
-        ) - 1;
-
+        Math.floor(Math.random() * 3) - 1;
 
     listeners =
         Math.max(
@@ -169,91 +103,75 @@ function updateListeners() {
             )
         );
 
-
     onlineNumber.textContent =
         listeners;
-}
+
+}, 6000);
 
 
-setInterval(
-    updateListeners,
-    6000
-);
-
-
-/* =========================================================
+/* =====================================================
    YOUTUBE IFRAME API
-========================================================= */
+===================================================== */
 
-/*
-    IMPORTANT:
+window.onYouTubeIframeAPIReady = function () {
 
-    index.html loads this app.js BEFORE the YouTube API.
+    console.log(
+        "YouTube IFrame API loaded."
+    );
 
-    Therefore this callback already exists when YouTube
-    calls window.onYouTubeIframeAPIReady().
-*/
 
-window.onYouTubeIframeAPIReady =
-    function () {
-
-        console.log(
-            "YouTube IFrame API loaded."
+    const iframe =
+        document.getElementById(
+            "youtube-player"
         );
 
 
-        const iframe =
-            document.getElementById(
-                "youtube-player"
-            );
+    if (!iframe) {
 
-
-        if (!iframe) {
-
-            console.error(
-                "YouTube iframe not found."
-            );
-
-            return;
-        }
-
-
-        console.log(
-            "YouTube iframe found."
+        console.error(
+            "YouTube iframe not found."
         );
 
+        return;
+    }
 
-        /*
-         * Connect the IFrame API to the existing iframe.
-         */
 
-        player =
-            new YT.Player(
-                iframe,
-                {
+    console.log(
+        "YouTube iframe found."
+    );
 
-                    events: {
 
-                        onReady:
-                            onPlayerReady,
+    /*
+     * The iframe already contains the playlist URL.
+     * We only attach the YouTube API to it.
+     */
 
-                        onStateChange:
-                            onPlayerStateChange,
+    player =
+        new YT.Player(
+            iframe,
+            {
 
-                        onError:
-                            onPlayerError
+                events: {
 
-                    }
+                    onReady:
+                        onPlayerReady,
+
+                    onStateChange:
+                        onPlayerStateChange,
+
+                    onError:
+                        onPlayerError
 
                 }
-            );
 
-    };
+            }
+        );
+};
 
 
-/* =========================================================
+/* =====================================================
    PLAYER READY
-========================================================= */
+===================================================== */
 
 function onPlayerReady() {
 
@@ -261,32 +179,23 @@ function onPlayerReady() {
         "YouTube player ready."
     );
 
-
     playerReady = true;
 
 
     /*
-     * The playlist is already specified in the iframe URL:
-     *
-     * /embed/videoseries?list=...
-     *
-     * Therefore we don't call loadPlaylist().
+     * Playlist is already loaded by the iframe URL.
      */
 
     setTimeout(
-        function () {
-
-            updateTrackInformation();
-
-        },
-        1000
+        updateTrackInformation,
+        1500
     );
 }
 
 
-/* =========================================================
+/* =====================================================
    START BUTTON
-========================================================= */
+===================================================== */
 
 if (startButton) {
 
@@ -312,25 +221,20 @@ if (startButton) {
             }
 
 
-            started = true;
-
-
             console.log(
                 "Starting music..."
             );
 
 
             /*
-             * This is executed directly from the
-             * user's click, allowing browser audio
-             * playback.
+             * Called directly from the user's click.
              */
 
             player.playVideo();
 
 
             /*
-             * Hide the landing screen.
+             * Hide start screen.
              */
 
             if (startScreen) {
@@ -340,33 +244,15 @@ if (startButton) {
                 );
             }
 
-
-            /*
-             * Show the glass player.
-             */
-
-            if (musicPlayer) {
-
-                musicPlayer.classList.add(
-                    "visible"
-                );
-            }
-
-
-            setTimeout(
-                updateTrackInformation,
-                1000
-            );
-
         }
     );
 
 }
 
 
-/* =========================================================
+/* =====================================================
    PLAY / PAUSE
-========================================================= */
+===================================================== */
 
 if (playPause) {
 
@@ -388,20 +274,16 @@ if (playPause) {
 
 
             if (
-
                 state ===
                     YT.PlayerState.PLAYING ||
 
                 state ===
                     YT.PlayerState.BUFFERING
-
             ) {
 
                 player.pauseVideo();
 
-            }
-
-            else {
+            } else {
 
                 player.playVideo();
 
@@ -413,9 +295,9 @@ if (playPause) {
 }
 
 
-/* =========================================================
-   NEXT SONG
-========================================================= */
+/* =====================================================
+   NEXT
+===================================================== */
 
 if (nextButton) {
 
@@ -433,17 +315,11 @@ if (nextButton) {
 
 
             console.log(
-                "Skipping to next track..."
+                "Next track..."
             );
 
 
             player.nextVideo();
-
-
-            setTimeout(
-                updateTrackInformation,
-                1000
-            );
 
         }
     );
@@ -451,13 +327,11 @@ if (nextButton) {
 }
 
 
-/* =========================================================
-   YOUTUBE PLAYER STATE
-========================================================= */
+/* =====================================================
+   PLAYER STATE
+===================================================== */
 
-function onPlayerStateChange(
-    event
-) {
+function onPlayerStateChange(event) {
 
     console.log(
         "Player state:",
@@ -470,10 +344,6 @@ function onPlayerStateChange(
     ) {
 
 
-        /* ---------------------------------------------
-           UNSTARTED
-        --------------------------------------------- */
-
         case YT.PlayerState.UNSTARTED:
 
             console.log(
@@ -483,31 +353,35 @@ function onPlayerStateChange(
             break;
 
 
-        /* ---------------------------------------------
-           CUED
-        --------------------------------------------- */
-
         case YT.PlayerState.CUED:
 
             console.log(
                 "Playlist successfully cued."
             );
 
-
             updateTrackInformation();
 
             break;
 
-
-        /* ---------------------------------------------
-           PLAYING
-        --------------------------------------------- */
 
         case YT.PlayerState.PLAYING:
 
             console.log(
                 "PLAYING"
             );
+
+
+            /*
+             * Show glass player only once
+             * actual playback begins.
+             */
+
+            if (musicPlayer) {
+
+                musicPlayer.classList.add(
+                    "visible"
+                );
+            }
 
 
             if (playPause) {
@@ -522,10 +396,6 @@ function onPlayerStateChange(
             break;
 
 
-        /* ---------------------------------------------
-           PAUSED
-        --------------------------------------------- */
-
         case YT.PlayerState.PAUSED:
 
             console.log(
@@ -539,13 +409,8 @@ function onPlayerStateChange(
                     "▶";
             }
 
-
             break;
 
-
-        /* ---------------------------------------------
-           BUFFERING
-        --------------------------------------------- */
 
         case YT.PlayerState.BUFFERING:
 
@@ -556,21 +421,12 @@ function onPlayerStateChange(
             break;
 
 
-        /* ---------------------------------------------
-           ENDED
-        --------------------------------------------- */
-
         case YT.PlayerState.ENDED:
 
             console.log(
                 "Track ended. Moving to next..."
             );
 
-
-            /*
-             * Automatically continue through
-             * the playlist.
-             */
 
             if (player) {
 
@@ -585,9 +441,9 @@ function onPlayerStateChange(
 }
 
 
-/* =========================================================
+/* =====================================================
    TRACK INFORMATION
-========================================================= */
+===================================================== */
 
 function updateTrackInformation() {
 
@@ -613,7 +469,7 @@ function updateTrackInformation() {
     catch (error) {
 
         console.warn(
-            "Could not get YouTube video data.",
+            "Could not read YouTube video data.",
             error
         );
 
@@ -662,9 +518,9 @@ function updateTrackInformation() {
 }
 
 
-/* =========================================================
+/* =====================================================
    THUMBNAIL
-========================================================= */
+===================================================== */
 
 function updateThumbnail(
     videoId
@@ -675,7 +531,21 @@ function updateThumbnail(
     }
 
 
-    const thumbnailURL =
+    /*
+     * "videoseries" is the playlist container,
+     * not an actual YouTube video ID.
+     */
+
+    if (
+        !videoId ||
+        videoId === "videoseries"
+    ) {
+
+        return;
+    }
+
+
+    const url =
         `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
 
@@ -712,24 +582,22 @@ function updateThumbnail(
         function () {
 
             console.warn(
-                "YouTube thumbnail unavailable."
+                "Thumbnail unavailable."
             );
 
         };
 
 
     albumArt.src =
-        thumbnailURL;
+        url;
 }
 
 
-/* =========================================================
-   YOUTUBE ERROR HANDLER
-========================================================= */
+/* =====================================================
+   YOUTUBE ERROR
+===================================================== */
 
-function onPlayerError(
-    event
-) {
+function onPlayerError(event) {
 
     console.error(
         "YouTube error code:",
@@ -738,57 +606,24 @@ function onPlayerError(
 
 
     /*
-     * 2
-     * Invalid parameter
+     * 100 = video unavailable
+     * 101 = embedding disabled
+     * 150 = embedding disabled
      */
 
     if (
-        event.data === 2
-    ) {
-
-        console.error(
-            "YouTube rejected the player configuration."
-        );
-
-        return;
-    }
-
-
-    /*
-     * 5
-     * HTML5 player error
-     */
-
-    if (
-        event.data === 5
-    ) {
-
-        console.error(
-            "YouTube HTML5 player error."
-        );
-
-        return;
-    }
-
-
-    /*
-     * 100
-     * Video unavailable
-     *
-     * 101 / 150
-     * Embedding disabled
-     */
-
-    if (
-
         event.data === 100 ||
         event.data === 101 ||
         event.data === 150
-
     ) {
 
         console.warn(
-            "This track cannot be embedded. Skipping..."
+            "This track cannot be embedded."
+        );
+
+
+        console.warn(
+            "Trying the next track..."
         );
 
 
@@ -802,7 +637,40 @@ function onPlayerError(
                 }
 
             },
-            700
+            500
+        );
+
+
+        return;
+    }
+
+
+    /*
+     * 2 = invalid parameter
+     */
+
+    if (
+        event.data === 2
+    ) {
+
+        console.error(
+            "Invalid YouTube player parameter."
+        );
+
+        return;
+    }
+
+
+    /*
+     * 5 = HTML5 player error
+     */
+
+    if (
+        event.data === 5
+    ) {
+
+        console.error(
+            "YouTube HTML5 player error."
         );
 
     }
