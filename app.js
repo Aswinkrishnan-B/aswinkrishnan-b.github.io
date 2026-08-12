@@ -1,5 +1,5 @@
 const PLAYLIST_ID =
-    "PL6P929LsnhPJIF6Iz2b8Dyz4oU84kI75F";
+    "PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD";
 
 let player = null;
 let playerReady = false;
