@@ -2,123 +2,128 @@
 <html lang="ml">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
     <title>പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
-    <!-- Full-screen background -->
-    <main class="scene">
+    <div id="app">
 
-        <div class="background"></div>
-        <div class="vignette"></div>
+        <!-- BACKGROUND -->
+        <div id="background"></div>
+        <div id="dark-overlay"></div>
 
-        <!-- Top-left clock -->
-        <div class="clock" id="clock">
-            3:38 pm
-        </div>
+        <!-- TOP INFORMATION -->
 
-        <!-- Top-right online indicator -->
-        <div class="online">
+        <div id="clock">3:42 pm</div>
+
+        <div id="online">
             <span class="online-dot"></span>
-            <span id="listenerCount">127</span>
-            <span class="online-label">online</span>
+            <span id="online-number">128</span>
+            <span class="online-text">online</span>
         </div>
 
-        <!-- Title -->
+
+        <!-- TITLE -->
+
         <img
-            src="title.png"
-            class="site-title"
+            id="title-image"
+            src="./title.png"
             alt="പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി"
         >
 
-        <!-- Initial interaction screen -->
-        <div class="start-screen" id="startScreen">
 
-            <button class="start-button" id="startButton">
-                <span class="start-icon">▶</span>
+        <!-- START SCREEN -->
+
+        <div id="start-screen">
+
+            <button id="start-button">
+                <span class="start-play">▶</span>
                 <span>തുടങ്ങൂ</span>
             </button>
 
-            <div class="start-hint">
+            <div class="start-subtitle">
                 സ്വകാര്യ ബസ് യാത്രയ്ക്കുള്ള പാട്ടുപെട്ടി
             </div>
 
         </div>
 
-        <!-- Hidden YouTube player -->
+
+        <!-- YOUTUBE PLAYER -->
+
         <div id="youtube-player"></div>
 
-        <!-- Bottom glass player -->
-        <div class="player-container" id="playerContainer">
 
-            <div class="player-bar">
+        <!-- MUSIC PLAYER -->
 
-                <!-- Current song thumbnail -->
-                <div class="thumbnail-wrapper">
-                    <img
-                        id="songThumbnail"
-                        class="song-thumbnail"
-                        src=""
-                        alt=""
-                    >
+        <div id="music-player">
 
-                    <div class="thumbnail-placeholder" id="thumbnailPlaceholder">
-                        ♪
-                    </div>
+            <div id="album-art-container">
+
+                <img
+                    id="album-art"
+                    src=""
+                    alt=""
+                >
+
+                <div id="album-placeholder">
+                    ♪
                 </div>
 
-                <!-- Song information -->
-                <div class="song-info">
+            </div>
 
-                    <div class="song-label">
-                        ഇപ്പോൾ കേൾക്കുന്നത്
-                    </div>
 
-                    <div
-                        class="song-title"
-                        id="songTitle"
-                    >
-                        പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി
-                    </div>
+            <div id="track-information">
 
+                <div id="now-playing">
+                    ഇപ്പോൾ കേൾക്കുന്നത്
                 </div>
 
-                <!-- Controls -->
-                <div class="controls">
-
-                    <button
-                        class="control-button play-button"
-                        id="playButton"
-                        aria-label="Play"
-                    >
-                        ▶
-                    </button>
-
-                    <button
-                        class="control-button next-button"
-                        id="nextButton"
-                        aria-label="Next song"
-                    >
-                        <span>▶</span><span>▶</span>
-                    </button>
-
+                <div id="track-title">
+                    പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി
                 </div>
+
+            </div>
+
+
+            <div id="controls">
+
+                <button
+                    id="play-pause"
+                    aria-label="Play"
+                >
+                    ▶
+                </button>
+
+                <button
+                    id="next"
+                    aria-label="Next"
+                >
+                    <span>▶</span><span>▶</span>
+                </button>
 
             </div>
 
         </div>
 
-    </main>
+    </div>
 
-    <script src="app.js"></script>
+
+    <!-- YOUTUBE API -->
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <!-- OUR CODE -->
+
+    <script src="./app.js"></script>
 
 </body>
 </html>
