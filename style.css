@@ -1,3 +1,7 @@
+/* =========================================================
+   RESET
+========================================================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -14,6 +18,7 @@ body {
 
 body {
     font-family:
+        "Manjari",
         "Noto Sans Malayalam",
         "Nirmala UI",
         system-ui,
@@ -26,6 +31,11 @@ button {
     font-family: inherit;
 }
 
+
+/* =========================================================
+   APP + BACKGROUND
+========================================================= */
+
 #app {
     position: fixed;
     inset: 0;
@@ -37,10 +47,6 @@ button {
     background: #151515;
 }
 
-/* =========================================================
-   BACKGROUND
-========================================================= */
-
 #background {
     position: absolute;
     inset: -2%;
@@ -50,15 +56,16 @@ button {
 
     z-index: 0;
 
-    background-image: url("./background.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
+    background:
+        url("./background.png")
+        center center / cover
+        no-repeat;
 }
 
 #dark-overlay {
     position: absolute;
     inset: 0;
+
     z-index: 1;
 
     pointer-events: none;
@@ -66,11 +73,12 @@ button {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(0, 0, 0, 0.00) 0%,
-            rgba(0, 0, 0, 0.08) 44%,
-            rgba(0, 0, 0, 0.64) 100%
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.07) 45%,
+            rgba(0, 0, 0, 0.58) 100%
         );
 }
+
 
 /* =========================================================
    CLOCK
@@ -82,25 +90,23 @@ button {
     top: max(20px, env(safe-area-inset-top));
     left: max(24px, env(safe-area-inset-left));
 
-    z-index: 20;
+    z-index: 30;
 
-    color: rgba(255, 255, 255, 0.94);
+    color: rgba(255, 255, 255, 0.95);
 
     font-family:
-        "Noto Sans Malayalam",
         system-ui,
         sans-serif;
 
     font-size: 16px;
     font-weight: 800;
 
-    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
 
     text-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.72);
-
-    font-variant-numeric: tabular-nums;
+        0 2px 10px rgba(0, 0, 0, 0.75);
 }
+
 
 /* =========================================================
    ONLINE
@@ -112,17 +118,19 @@ button {
     top: max(16px, env(safe-area-inset-top));
     right: max(20px, env(safe-area-inset-right));
 
-    z-index: 20;
+    z-index: 30;
 
     display: flex;
     align-items: center;
     gap: 6px;
 
     min-height: 32px;
+
     padding: 0 13px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.20);
+        1px solid
+        rgba(255, 255, 255, 0.20);
 
     border-radius: 999px;
 
@@ -139,10 +147,7 @@ button {
 
     color: rgba(255, 255, 255, 0.94);
 
-    font-family:
-        "Noto Sans Malayalam",
-        system-ui,
-        sans-serif;
+    font-family: system-ui, sans-serif;
 
     font-size: 12px;
     font-weight: 800;
@@ -156,8 +161,6 @@ button {
     width: 7px;
     height: 7px;
 
-    flex-shrink: 0;
-
     border-radius: 50%;
 
     background: #4cff7b;
@@ -165,7 +168,10 @@ button {
     box-shadow:
         0 0 8px rgba(76, 255, 123, 0.72);
 
-    animation: onlinePulse 2s infinite;
+    animation:
+        onlinePulse
+        2s
+        infinite;
 }
 
 .online-text {
@@ -185,6 +191,7 @@ button {
     }
 }
 
+
 /* =========================================================
    TITLE
 ========================================================= */
@@ -192,22 +199,12 @@ button {
 #site-title {
     position: absolute;
 
-    /*
-     * Keep the title visually central rather than hugging
-     * the top edge. The transform is intentionally only
-     * horizontal so its vertical position remains predictable.
-     */
     top: 25%;
     left: 50%;
 
-    z-index: 10;
+    z-index: 20;
 
     transform: translateX(-50%);
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
 
     width: max-content;
 
@@ -216,7 +213,6 @@ button {
     font-family:
         "Manjari",
         "Noto Sans Malayalam",
-        "Nirmala UI",
         sans-serif;
 
     font-size:
@@ -231,29 +227,222 @@ button {
     text-align: center;
 
     text-shadow:
-        0 4px 0 rgba(0, 0, 0, 0.16),
-        0 8px 25px rgba(0, 0, 0, 0.62);
+        0 4px 0 rgba(0, 0, 0, 0.14),
+        0 8px 25px rgba(0, 0, 0, 0.60);
 
     pointer-events: none;
 }
 
 #site-title span {
     display: block;
-
-    padding: 0 0.04em;
-
     white-space: nowrap;
 }
 
+
 /* =========================================================
-   START
+   CURRENT SONG GLASS CARD
+========================================================= */
+
+#song-card {
+    position: absolute;
+
+    left: 28px;
+    top: 50%;
+
+    z-index: 25;
+
+    width: 310px;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 10px;
+
+    transform:
+        translateY(-50%)
+        translateX(-20px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.22);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.20),
+            rgba(255, 255, 255, 0.055)
+        );
+
+    backdrop-filter:
+        blur(25px)
+        saturate(150%);
+
+    -webkit-backdrop-filter:
+        blur(25px)
+        saturate(150%);
+
+    box-shadow:
+        0 20px 55px
+        rgba(0, 0, 0, 0.34),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.16);
+
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+}
+
+#song-card.visible {
+    opacity: 1;
+
+    transform:
+        translateY(-50%)
+        translateX(0);
+}
+
+.song-art-wrap {
+    position: relative;
+
+    width: 82px;
+    height: 82px;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    border-radius: 15px;
+
+    background:
+        rgba(0, 0, 0, 0.25);
+
+    box-shadow:
+        0 7px 20px
+        rgba(0, 0, 0, 0.30);
+}
+
+#song-art {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    opacity: 1;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.5s ease;
+}
+
+#song-card:hover #song-art {
+    transform: scale(1.04);
+}
+
+.song-info {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+.song-label {
+    margin-bottom: 5px;
+
+    color:
+        rgba(255, 255, 255, 0.54);
+
+    font-family: system-ui, sans-serif;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+}
+
+#song-title {
+    overflow: hidden;
+
+    color:
+        rgba(255, 255, 255, 0.97);
+
+    font-family: system-ui, sans-serif;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    letter-spacing: -0.02em;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#song-artist {
+    margin-top: 4px;
+
+    overflow: hidden;
+
+    color:
+        rgba(255, 255, 255, 0.64);
+
+    font-family: system-ui, sans-serif;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    line-height: 1.25;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   HIDDEN YOUTUBE PLAYER
+========================================================= */
+
+#youtube-player {
+    position: fixed;
+
+    width: 1px;
+    height: 1px;
+
+    left: -10px;
+    top: -10px;
+
+    z-index: -100;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   START SCREEN
 ========================================================= */
 
 #start-screen {
     position: absolute;
     inset: 0;
 
-    z-index: 30;
+    z-index: 40;
 
     display: flex;
     flex-direction: column;
@@ -274,8 +463,10 @@ button {
 
 #start-button {
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     gap: 10px;
 
     min-width: 150px;
@@ -284,7 +475,8 @@ button {
     padding: 0 25px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.30);
+        1px solid
+        rgba(255, 255, 255, 0.30);
 
     border-radius: 999px;
 
@@ -317,9 +509,7 @@ button {
 
 #start-button:hover {
     transform: translateY(-2px);
-
-    background:
-        rgba(30, 30, 30, 0.64);
+    background: rgba(30, 30, 30, 0.64);
 }
 
 #start-button:active {
@@ -347,6 +537,8 @@ button {
     color:
         rgba(255, 255, 255, 0.68);
 
+    font-family: system-ui, sans-serif;
+
     font-size: 12px;
     font-weight: 600;
 
@@ -354,43 +546,23 @@ button {
         0 2px 10px rgba(0, 0, 0, 0.80);
 }
 
-/* =========================================================
-   YOUTUBE
-========================================================= */
-
-#youtube-player {
-    position: fixed;
-
-    width: 1px;
-    height: 1px;
-
-    left: -10px;
-    top: -10px;
-
-    z-index: -100;
-
-    border: 0;
-
-    opacity: 0;
-
-    pointer-events: none;
-}
 
 /* =========================================================
-   GLASS PLAYER
+   BOTTOM MUSIC PLAYER
 ========================================================= */
 
 #music-player {
     position: absolute;
 
     left: 50%;
+
     bottom:
         max(
             22px,
             env(safe-area-inset-bottom)
         );
 
-    z-index: 25;
+    z-index: 35;
 
     display: flex;
     align-items: center;
@@ -403,7 +575,8 @@ button {
 
     min-height: 78px;
 
-    padding: 9px 10px 9px 9px;
+    padding:
+        9px 10px 9px 9px;
 
     transform:
         translateX(-50%)
@@ -414,7 +587,8 @@ button {
     pointer-events: none;
 
     border:
-        1px solid rgba(255, 255, 255, 0.28);
+        1px solid
+        rgba(255, 255, 255, 0.28);
 
     border-radius: 26px;
 
@@ -445,12 +619,14 @@ button {
 
 #music-player.visible {
     opacity: 1;
+
     pointer-events: auto;
 
     transform:
         translateX(-50%)
         translateY(0);
 }
+
 
 /* =========================================================
    VINYL
@@ -475,7 +651,8 @@ button {
         rgba(0, 0, 0, 0.22);
 
     box-shadow:
-        0 6px 20px rgba(0, 0, 0, 0.28);
+        0 6px 20px
+        rgba(0, 0, 0, 0.28);
 }
 
 #vinyl {
@@ -505,12 +682,15 @@ button {
         inset 0 0 10px rgba(255, 255, 255, 0.05);
 
     animation:
-        vinylSpin 3.4s linear infinite;
+        vinylSpin
+        3.4s
+        linear
+        infinite;
 
     animation-play-state: paused;
 }
 
-#music-player.visible #vinyl {
+#music-player.is-playing #vinyl {
     animation-play-state: running;
 }
 
@@ -523,7 +703,8 @@ button {
     top: 50%;
     left: 50%;
 
-    transform: translate(-50%, -50%);
+    transform:
+        translate(-50%, -50%);
 
     border-radius: 50%;
 
@@ -534,9 +715,6 @@ button {
             #704e38 24% 48%,
             #33241e 49% 100%
         );
-
-    box-shadow:
-        0 0 4px rgba(0, 0, 0, 0.45);
 }
 
 .vinyl-hole {
@@ -548,7 +726,8 @@ button {
     top: 50%;
     left: 50%;
 
-    transform: translate(-50%, -50%);
+    transform:
+        translate(-50%, -50%);
 
     border-radius: 50%;
 
@@ -563,6 +742,7 @@ button {
     }
 }
 
+
 /* =========================================================
    PLAYER STATUS
 ========================================================= */
@@ -574,7 +754,6 @@ button {
 
     display: flex;
     flex-direction: column;
-
     justify-content: center;
 
     padding: 0 16px;
@@ -584,19 +763,17 @@ button {
     color:
         rgba(255, 255, 255, 0.82);
 
-    font-size: 14px;
+    font-family: system-ui, sans-serif;
 
+    font-size: 14px;
     font-weight: 800;
 
     letter-spacing: -0.025em;
 }
 
-/* =========================================================
-   PLAYING BARS
-========================================================= */
-
 #playing-indicator {
     display: flex;
+
     align-items: flex-end;
 
     gap: 3px;
@@ -616,12 +793,16 @@ button {
         rgba(255, 255, 255, 0.72);
 
     animation:
-        musicBars 0.85s ease-in-out infinite alternate;
+        musicBars
+        0.85s
+        ease-in-out
+        infinite
+        alternate;
 
     animation-play-state: paused;
 }
 
-#music-player.visible #playing-indicator span {
+#music-player.is-playing #playing-indicator span {
     animation-play-state: running;
 }
 
@@ -652,12 +833,14 @@ button {
     }
 }
 
+
 /* =========================================================
-   MODERN CONTROLS
+   CONTROLS
 ========================================================= */
 
 #controls {
     display: flex;
+
     align-items: center;
 
     gap: 7px;
@@ -666,16 +849,16 @@ button {
 }
 
 #controls button {
-    position: relative;
-
     display: grid;
+
     place-items: center;
 
     width: 45px;
     height: 45px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.18);
+        1px solid
+        rgba(255, 255, 255, 0.18);
 
     border-radius: 50%;
 
@@ -709,8 +892,7 @@ button {
 }
 
 #controls button:active {
-    transform:
-        scale(0.91);
+    transform: scale(0.91);
 }
 
 #controls button svg {
@@ -729,13 +911,11 @@ button {
     display: none;
 }
 
-#music-player.is-playing
-#play-pause .icon-play {
+#music-player.is-playing #play-pause .icon-play {
     display: none;
 }
 
-#music-player.is-playing
-#play-pause .icon-pause {
+#music-player.is-playing #play-pause .icon-pause {
     display: block;
 }
 
@@ -743,6 +923,7 @@ button {
     width: 21px;
     height: 21px;
 }
+
 
 /* =========================================================
    MOBILE
@@ -753,7 +934,6 @@ button {
     #clock {
         top: 18px;
         left: 18px;
-
         font-size: 14px;
     }
 
@@ -777,9 +957,46 @@ button {
                 11vw,
                 62px
             );
-
-        line-height: 1.02;
     }
+
+
+    #song-card {
+        left: 14px;
+        right: 14px;
+
+        top: auto;
+        bottom: 98px;
+
+        width: auto;
+
+        padding: 8px;
+
+        border-radius: 18px;
+
+        transform:
+            translateY(15px);
+    }
+
+    #song-card.visible {
+        transform:
+            translateY(0);
+    }
+
+    .song-art-wrap {
+        width: 64px;
+        height: 64px;
+
+        border-radius: 12px;
+    }
+
+    #song-title {
+        font-size: 13px;
+    }
+
+    #song-artist {
+        font-size: 11px;
+    }
+
 
     #music-player {
         bottom:
@@ -832,7 +1049,16 @@ button {
     }
 }
 
-@media (max-height: 600px) and (min-width: 601px) {
+
+/* =========================================================
+   SHORT LANDSCAPE
+========================================================= */
+
+@media (
+    max-height: 600px
+) and (
+    min-width: 601px
+) {
 
     #site-title {
         top: 20%;
@@ -845,7 +1071,26 @@ button {
             );
     }
 
+    #song-card {
+        left: 24px;
+        width: 290px;
+    }
+
     #music-player {
         bottom: 12px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .online-dot,
+    #vinyl,
+    #playing-indicator span {
+        animation: none !important;
     }
 }
