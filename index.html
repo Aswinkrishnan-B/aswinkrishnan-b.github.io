@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="ml">
+
 <head>
+
     <meta charset="UTF-8">
+
+    <!-- Important for YouTube embedded-player requests -->
     <meta
-    name="referrer"
-    content="strict-origin-when-cross-origin"
->
+        name="referrer"
+        content="strict-origin-when-cross-origin"
+    >
 
     <meta
         name="viewport"
@@ -15,28 +19,54 @@
     <title>പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി</title>
 
     <link rel="stylesheet" href="./style.css">
+
 </head>
+
 
 <body>
 
-    <div id="app">
+    <main id="app">
 
-        <!-- BACKGROUND -->
+        <!-- =================================================
+             BACKGROUND
+        ================================================== -->
+
         <div id="background"></div>
+
         <div id="dark-overlay"></div>
 
-        <!-- TOP INFORMATION -->
 
-        <div id="clock">3:42 pm</div>
+        <!-- =================================================
+             TOP LEFT CLOCK
+        ================================================== -->
 
-        <div id="online">
-            <span class="online-dot"></span>
-            <span id="online-number">128</span>
-            <span class="online-text">online</span>
+        <div id="clock">
+            3:42 pm
         </div>
 
 
-        <!-- TITLE -->
+        <!-- =================================================
+             TOP RIGHT ONLINE COUNTER
+        ================================================== -->
+
+        <div id="online">
+
+            <span class="online-dot"></span>
+
+            <span id="online-number">
+                128
+            </span>
+
+            <span class="online-text">
+                online
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             TITLE
+        ================================================== -->
 
         <img
             id="title-image"
@@ -45,14 +75,27 @@
         >
 
 
-        <!-- START SCREEN -->
+        <!-- =================================================
+             START SCREEN
+        ================================================== -->
 
         <div id="start-screen">
 
-            <button id="start-button">
-                <span class="start-play">▶</span>
-                <span>തുടങ്ങൂ</span>
+            <button
+                id="start-button"
+                type="button"
+            >
+
+                <span class="start-play">
+                    ▶
+                </span>
+
+                <span>
+                    തുടങ്ങൂ
+                </span>
+
             </button>
+
 
             <div class="start-subtitle">
                 സ്വകാര്യ ബസ് യാത്രയ്ക്കുള്ള പാട്ടുപെട്ടി
@@ -61,14 +104,31 @@
         </div>
 
 
-        <!-- YOUTUBE PLAYER -->
+        <!-- =================================================
+             YOUTUBE PLAYER
+             
+             This is deliberately a real iframe.
+             It is kept almost completely invisible.
+        ================================================== -->
 
-        <div id="youtube-player"></div>
+        <iframe
+            id="youtube-player"
+            src="https://www.youtube.com/embed/videoseries?list=PLkX31-lqoSPdV5dI4SQPTYxxlwRiSOLzD&enablejsapi=1&origin=https%3A%2F%2Faswinkrishnan-b.github.io"
+            title="പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
 
 
-        <!-- MUSIC PLAYER -->
+        <!-- =================================================
+             GLASS MUSIC PLAYER
+        ================================================== -->
 
         <div id="music-player">
+
+
+            <!-- Album / video thumbnail -->
 
             <div id="album-art-container">
 
@@ -85,6 +145,8 @@
             </div>
 
 
+            <!-- Song information -->
+
             <div id="track-information">
 
                 <div id="now-playing">
@@ -98,18 +160,23 @@
             </div>
 
 
+            <!-- Controls -->
+
             <div id="controls">
 
                 <button
                     id="play-pause"
+                    type="button"
                     aria-label="Play"
                 >
                     ▶
                 </button>
 
+
                 <button
                     id="next"
-                    aria-label="Next"
+                    type="button"
+                    aria-label="Next song"
                 >
                     <span>▶</span><span>▶</span>
                 </button>
@@ -118,16 +185,25 @@
 
         </div>
 
-    </div>
+    </main>
 
 
-    <!-- YOUTUBE API -->
-
-    <script src="https://www.youtube.com/iframe_api"></script>
-
-    <!-- OUR CODE -->
+    <!-- =====================================================
+         OUR JAVASCRIPT
+         
+         Must load BEFORE the YouTube API so that
+         onYouTubeIframeAPIReady already exists.
+    ====================================================== -->
 
     <script src="./app.js"></script>
 
+
+    <!-- =====================================================
+         YOUTUBE IFRAME API
+    ====================================================== -->
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
 </body>
+
 </html>
