@@ -139,10 +139,13 @@ window.onYouTubeIframeAPIReady = function () {
 
                 modestbranding: 1,
 
+                listType: "playlist",
+
+                list: PLAYLIST_ID,
+
                 origin:
                     window.location.origin
             },
-
 
             events: {
 
@@ -157,9 +160,41 @@ window.onYouTubeIframeAPIReady = function () {
             }
         }
     );
+
+
+    /*
+     * Give YouTube time to create the iframe,
+     * then explicitly tell the browser which
+     * referrer policy to use.
+     */
+
+    setTimeout(() => {
+
+        const iframe =
+            document.querySelector(
+                "#youtube-player iframe"
+            );
+
+        if (iframe) {
+
+            iframe.setAttribute(
+                "referrerpolicy",
+                "strict-origin-when-cross-origin"
+            );
+
+            iframe.setAttribute(
+                "allow",
+                "autoplay; encrypted-media"
+            );
+
+            console.log(
+                "YouTube iframe configured."
+            );
+
+        }
+
+    }, 1000);
 };
-
-
 /* =====================================================
    PLAYER READY
 ===================================================== */
