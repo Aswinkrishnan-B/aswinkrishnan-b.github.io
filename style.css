@@ -1,3 +1,7 @@
+/* =========================================================
+   RESET
+========================================================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -26,6 +30,11 @@ button {
     font-family: inherit;
 }
 
+
+/* =========================================================
+   APP
+========================================================= */
+
 #app {
     position: fixed;
     inset: 0;
@@ -36,6 +45,7 @@ button {
     overflow: hidden;
     background: #151515;
 }
+
 
 /* =========================================================
    BACKGROUND
@@ -52,13 +62,19 @@ button {
 
     background-image: url("./background.png");
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center center;
     background-size: cover;
 }
+
+
+/* =========================================================
+   DARK VIGNETTE
+========================================================= */
 
 #dark-overlay {
     position: absolute;
     inset: 0;
+
     z-index: 1;
 
     pointer-events: none;
@@ -66,11 +82,12 @@ button {
     background:
         radial-gradient(
             ellipse at center,
-            rgba(0, 0, 0, 0.00) 0%,
+            rgba(0, 0, 0, 0) 0%,
             rgba(0, 0, 0, 0.08) 44%,
             rgba(0, 0, 0, 0.64) 100%
         );
 }
+
 
 /* =========================================================
    CLOCK
@@ -96,14 +113,15 @@ button {
 
     letter-spacing: -0.02em;
 
+    font-variant-numeric: tabular-nums;
+
     text-shadow:
         0 2px 10px rgba(0, 0, 0, 0.72);
-
-    font-variant-numeric: tabular-nums;
 }
 
+
 /* =========================================================
-   ONLINE
+   ONLINE COUNTER
 ========================================================= */
 
 #online {
@@ -119,15 +137,13 @@ button {
     gap: 6px;
 
     min-height: 32px;
+
     padding: 0 13px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.20);
-
+    border: 1px solid rgba(255, 255, 255, 0.20);
     border-radius: 999px;
 
-    background:
-        rgba(12, 12, 12, 0.32);
+    background: rgba(12, 12, 12, 0.32);
 
     backdrop-filter:
         blur(16px)
@@ -138,11 +154,6 @@ button {
         saturate(140%);
 
     color: rgba(255, 255, 255, 0.94);
-
-    font-family:
-        "Noto Sans Malayalam",
-        system-ui,
-        sans-serif;
 
     font-size: 12px;
     font-weight: 800;
@@ -174,7 +185,8 @@ button {
 }
 
 @keyframes onlinePulse {
-    0%, 100% {
+    0%,
+    100% {
         transform: scale(1);
         opacity: 1;
     }
@@ -185,18 +197,14 @@ button {
     }
 }
 
+
 /* =========================================================
-   TITLE
+   MAIN TITLE
 ========================================================= */
 
 #site-title {
     position: absolute;
 
-    /*
-     * Keep the title visually central rather than hugging
-     * the top edge. The transform is intentionally only
-     * horizontal so its vertical position remains predictable.
-     */
     top: 25%;
     left: 50%;
 
@@ -206,12 +214,11 @@ button {
 
     display: flex;
     flex-direction: column;
-
     align-items: center;
 
     width: max-content;
 
-    color: #fff;
+    color: #ffffff;
 
     font-family:
         "Manjari",
@@ -220,7 +227,11 @@ button {
         sans-serif;
 
     font-size:
-        clamp(48px, 6.2vw, 88px);
+        clamp(
+            48px,
+            6.2vw,
+            88px
+        );
 
     font-weight: 700;
 
@@ -239,18 +250,558 @@ button {
 
 #site-title span {
     display: block;
-
     padding: 0 0.04em;
-
     white-space: nowrap;
 }
 
+
 /* =========================================================
-   START
+   FANTASY CLOUD VIDEO PORTAL
+========================================================= */
+
+#mystical-video-window {
+    position: absolute;
+
+    left: 50%;
+    top: 47%;
+
+    z-index: 8;
+
+    width: min(650px, 66vw);
+
+    aspect-ratio: 16 / 9;
+
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   VIDEO CORE
+========================================================= */
+
+.mystical-video-inner {
+    position: absolute;
+
+    inset: 7% 6% 7% 6%;
+
+    overflow: hidden;
+
+    background: #151515;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.42),
+        inset 0 0 55px rgba(0, 0, 0, 0.30);
+
+    isolation: isolate;
+}
+
+
+/* =========================================================
+   VIDEO
+========================================================= */
+
+#mystical-video {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    filter:
+        saturate(0.88)
+        contrast(0.94)
+        brightness(0.91);
+}
+
+
+/* =========================================================
+   CLOUD BASE
+========================================================= */
+
+.portal-cloud {
+    position: absolute;
+
+    z-index: 5;
+
+    pointer-events: none;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            ellipse at 35% 35%,
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(248, 249, 247, 0.92) 24%,
+            rgba(238, 241, 238, 0.68) 49%,
+            rgba(226, 231, 227, 0.28) 68%,
+            transparent 78%
+        );
+
+    filter: blur(10px);
+
+    opacity: 0.92;
+
+    animation:
+        cloudDrift
+        14s
+        ease-in-out
+        infinite
+        alternate;
+
+    will-change:
+        transform,
+        opacity;
+}
+
+
+/* =========================================================
+   BACK CLOUD
+========================================================= */
+
+.cloud-back {
+    inset: -12% -5%;
+
+    z-index: 3;
+
+    background:
+        radial-gradient(
+            ellipse at 20% 45%,
+            rgba(255, 255, 255, 0.85) 0%,
+            rgba(241, 244, 241, 0.50) 35%,
+            transparent 65%
+        ),
+
+        radial-gradient(
+            ellipse at 80% 55%,
+            rgba(255, 255, 255, 0.70) 0%,
+            rgba(231, 235, 231, 0.30) 42%,
+            transparent 70%
+        );
+
+    filter: blur(22px);
+
+    opacity: 0.48;
+
+    animation:
+        cloudBackDrift
+        22s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+/* =========================================================
+   TOP CLOUD
+========================================================= */
+
+.cloud-top {
+    width: 72%;
+    height: 31%;
+
+    top: -13%;
+    left: 13%;
+
+    transform: rotate(-3deg);
+
+    filter: blur(12px);
+
+    animation:
+        cloudTopDrift
+        16s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+/* =========================================================
+   LEFT CLOUD
+========================================================= */
+
+.cloud-left {
+    width: 25%;
+    height: 70%;
+
+    left: -12%;
+    top: 13%;
+
+    transform: rotate(9deg);
+
+    filter: blur(13px);
+
+    background:
+        radial-gradient(
+            ellipse at 60% 45%,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(240, 243, 240, 0.68) 40%,
+            transparent 73%
+        );
+
+    animation:
+        cloudLeftDrift
+        19s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+/* =========================================================
+   BOTTOM CLOUD
+========================================================= */
+
+.cloud-bottom {
+    width: 75%;
+    height: 25%;
+
+    left: 7%;
+    bottom: -13%;
+
+    transform: rotate(2deg);
+
+    filter: blur(14px);
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(250, 251, 249, 0.90) 0%,
+            rgba(236, 239, 236, 0.62) 42%,
+            transparent 73%
+        );
+
+    animation:
+        cloudBottomDrift
+        17s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+/* =========================================================
+   CLOUD MOVEMENT
+========================================================= */
+
+@keyframes cloudDrift {
+    0% {
+        transform:
+            translate3d(-5px, 2px, 0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate3d(3px, -3px, 0)
+            scale(1.015);
+    }
+
+    100% {
+        transform:
+            translate3d(7px, 2px, 0)
+            scale(1.025);
+    }
+}
+
+@keyframes cloudBackDrift {
+    0% {
+        transform:
+            translate3d(-10px, 4px, 0)
+            scale(1.02);
+
+        opacity: 0.38;
+    }
+
+    50% {
+        transform:
+            translate3d(4px, -4px, 0)
+            scale(1.045);
+
+        opacity: 0.48;
+    }
+
+    100% {
+        transform:
+            translate3d(12px, 3px, 0)
+            scale(1.06);
+
+        opacity: 0.42;
+    }
+}
+
+@keyframes cloudTopDrift {
+    0% {
+        transform:
+            translate3d(-5px, 2px, 0)
+            rotate(-3deg)
+            scale(1);
+    }
+
+    100% {
+        transform:
+            translate3d(9px, -4px, 0)
+            rotate(-1deg)
+            scale(1.035);
+    }
+}
+
+@keyframes cloudLeftDrift {
+    0% {
+        transform:
+            translate3d(-3px, 0, 0)
+            rotate(9deg)
+            scale(1);
+    }
+
+    100% {
+        transform:
+            translate3d(7px, -5px, 0)
+            rotate(6deg)
+            scale(1.04);
+    }
+}
+
+@keyframes cloudBottomDrift {
+    0% {
+        transform:
+            translate3d(-6px, 2px, 0)
+            rotate(2deg)
+            scale(1);
+    }
+
+    100% {
+        transform:
+            translate3d(8px, -3px, 0)
+            rotate(0deg)
+            scale(1.035);
+    }
+}
+
+
+/* =========================================================
+   LOWER-RIGHT WATERMARK CLOUD
+========================================================= */
+
+.watermark-cloud {
+    position: absolute;
+
+    right: -8%;
+    bottom: -18%;
+
+    z-index: 10;
+
+    width: 57%;
+    height: 61%;
+
+    transform: rotate(-7deg);
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at 70% 72%,
+            rgba(255, 255, 255, 0.99) 0%,
+            rgba(248, 249, 247, 0.96) 27%,
+            rgba(239, 242, 239, 0.82) 48%,
+            rgba(229, 233, 229, 0.48) 63%,
+            transparent 78%
+        );
+
+    filter: blur(8px);
+
+    opacity: 0.97;
+
+    animation:
+        watermarkCloudDrift
+        11s
+        ease-in-out
+        infinite
+        alternate;
+
+    will-change:
+        transform,
+        opacity;
+}
+
+
+/* =========================================================
+   WATERMARK CLOUD PUFFS
+========================================================= */
+
+.watermark-cloud span {
+    position: absolute;
+
+    display: block;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 40% 35%,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(245, 247, 244, 0.94) 43%,
+            rgba(231, 235, 231, 0.55) 67%,
+            transparent 78%
+        );
+
+    filter: blur(7px);
+
+    animation:
+        cloudPuff
+        8s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+.watermark-cloud span:nth-child(1) {
+    width: 52%;
+    height: 64%;
+
+    left: 4%;
+    top: 7%;
+}
+
+.watermark-cloud span:nth-child(2) {
+    width: 43%;
+    height: 52%;
+
+    right: 14%;
+    top: -8%;
+
+    animation-delay: -2.5s;
+}
+
+.watermark-cloud span:nth-child(3) {
+    width: 58%;
+    height: 65%;
+
+    right: -9%;
+    bottom: -14%;
+
+    animation-delay: -5s;
+}
+
+
+/* =========================================================
+   WATERMARK CLOUD MOVEMENT
+========================================================= */
+
+@keyframes watermarkCloudDrift {
+    0% {
+        transform:
+            translate3d(-3px, 3px, 0)
+            rotate(-7deg)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate3d(4px, -2px, 0)
+            rotate(-5deg)
+            scale(1.025);
+    }
+
+    100% {
+        transform:
+            translate3d(8px, 2px, 0)
+            rotate(-8deg)
+            scale(1.045);
+    }
+}
+
+@keyframes cloudPuff {
+    0% {
+        transform:
+            translate3d(-3px, 2px, 0)
+            scale(0.98);
+    }
+
+    100% {
+        transform:
+            translate3d(4px, -3px, 0)
+            scale(1.04);
+    }
+}
+
+
+/* =========================================================
+   ETHEREAL HAZE
+========================================================= */
+
+.portal-haze {
+    position: absolute;
+
+    inset: -7%;
+
+    z-index: 12;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(255, 255, 255, 0.16),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            ellipse at 0% 50%,
+            rgba(255, 255, 255, 0.12),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            ellipse at 100% 75%,
+            rgba(255, 255, 255, 0.15),
+            transparent 33%
+        );
+
+    filter: blur(18px);
+
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   VIDEO INNER VIGNETTE
+========================================================= */
+
+.mystical-video-inner::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 4;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 45%,
+            rgba(0, 0, 0, 0.08) 72%,
+            rgba(0, 0, 0, 0.34) 100%
+        );
+}
+
+
+/* =========================================================
+   START SCREEN
 ========================================================= */
 
 #start-screen {
     position: absolute;
+
     inset: 0;
 
     z-index: 30;
@@ -272,10 +823,17 @@ button {
     pointer-events: none;
 }
 
+
+/* =========================================================
+   START BUTTON
+========================================================= */
+
 #start-button {
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     gap: 10px;
 
     min-width: 150px;
@@ -284,7 +842,8 @@ button {
     padding: 0 25px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.30);
+        1px solid
+        rgba(255, 255, 255, 0.30);
 
     border-radius: 999px;
 
@@ -299,7 +858,7 @@ button {
         blur(22px)
         saturate(130%);
 
-    color: #fff;
+    color: #ffffff;
 
     font-size: 16px;
     font-weight: 800;
@@ -307,8 +866,11 @@ button {
     cursor: pointer;
 
     box-shadow:
-        0 15px 50px rgba(0, 0, 0, 0.40),
-        inset 0 1px 0 rgba(255, 255, 255, 0.17);
+        0 15px 50px
+        rgba(0, 0, 0, 0.40),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.17);
 
     transition:
         transform 0.18s ease,
@@ -351,11 +913,13 @@ button {
     font-weight: 600;
 
     text-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.80);
+        0 2px 10px
+        rgba(0, 0, 0, 0.80);
 }
 
+
 /* =========================================================
-   YOUTUBE
+   HIDDEN YOUTUBE PLAYER
 ========================================================= */
 
 #youtube-player {
@@ -376,14 +940,16 @@ button {
     pointer-events: none;
 }
 
+
 /* =========================================================
-   GLASS PLAYER
+   GLASS MUSIC PLAYER
 ========================================================= */
 
 #music-player {
     position: absolute;
 
     left: 50%;
+
     bottom:
         max(
             22px,
@@ -403,7 +969,8 @@ button {
 
     min-height: 78px;
 
-    padding: 9px 10px 9px 9px;
+    padding:
+        9px 10px 9px 9px;
 
     transform:
         translateX(-50%)
@@ -414,7 +981,8 @@ button {
     pointer-events: none;
 
     border:
-        1px solid rgba(255, 255, 255, 0.28);
+        1px solid
+        rgba(255, 255, 255, 0.28);
 
     border-radius: 26px;
 
@@ -434,9 +1002,14 @@ button {
         saturate(150%);
 
     box-shadow:
-        0 20px 65px rgba(0, 0, 0, 0.42),
-        inset 0 1px 0 rgba(255, 255, 255, 0.18),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.14);
+        0 20px 65px
+        rgba(0, 0, 0, 0.42),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.18),
+
+        inset 0 -1px 0
+        rgba(0, 0, 0, 0.14);
 
     transition:
         opacity 0.55s ease,
@@ -445,12 +1018,14 @@ button {
 
 #music-player.visible {
     opacity: 1;
+
     pointer-events: auto;
 
     transform:
         translateX(-50%)
         translateY(0);
 }
+
 
 /* =========================================================
    VINYL
@@ -475,7 +1050,8 @@ button {
         rgba(0, 0, 0, 0.22);
 
     box-shadow:
-        0 6px 20px rgba(0, 0, 0, 0.28);
+        0 6px 20px
+        rgba(0, 0, 0, 0.28);
 }
 
 #vinyl {
@@ -492,6 +1068,7 @@ button {
             #181818 0 9%,
             transparent 10%
         ),
+
         repeating-radial-gradient(
             circle at center,
             #111 0px,
@@ -501,13 +1078,20 @@ button {
         );
 
     box-shadow:
-        0 2px 7px rgba(0, 0, 0, 0.55),
-        inset 0 0 10px rgba(255, 255, 255, 0.05);
+        0 2px 7px
+        rgba(0, 0, 0, 0.55),
+
+        inset 0 0 10px
+        rgba(255, 255, 255, 0.05);
 
     animation:
-        vinylSpin 3.4s linear infinite;
+        vinylSpin
+        3.4s
+        linear
+        infinite;
 
-    animation-play-state: paused;
+    animation-play-state:
+        paused;
 }
 
 #music-player.visible #vinyl {
@@ -523,7 +1107,8 @@ button {
     top: 50%;
     left: 50%;
 
-    transform: translate(-50%, -50%);
+    transform:
+        translate(-50%, -50%);
 
     border-radius: 50%;
 
@@ -536,7 +1121,8 @@ button {
         );
 
     box-shadow:
-        0 0 4px rgba(0, 0, 0, 0.45);
+        0 0 4px
+        rgba(0, 0, 0, 0.45);
 }
 
 .vinyl-hole {
@@ -548,11 +1134,13 @@ button {
     top: 50%;
     left: 50%;
 
-    transform: translate(-50%, -50%);
+    transform:
+        translate(-50%, -50%);
 
     border-radius: 50%;
 
-    background: #0c0c0c;
+    background:
+        #0c0c0c;
 
     z-index: 2;
 }
@@ -562,6 +1150,7 @@ button {
         transform: rotate(360deg);
     }
 }
+
 
 /* =========================================================
    PLAYER STATUS
@@ -573,11 +1162,13 @@ button {
     min-width: 0;
 
     display: flex;
+
     flex-direction: column;
 
     justify-content: center;
 
-    padding: 0 16px;
+    padding:
+        0 16px;
 }
 
 #now-playing {
@@ -588,15 +1179,18 @@ button {
 
     font-weight: 800;
 
-    letter-spacing: -0.025em;
+    letter-spacing:
+        -0.025em;
 }
 
+
 /* =========================================================
-   PLAYING BARS
+   PLAYING INDICATOR
 ========================================================= */
 
 #playing-indicator {
     display: flex;
+
     align-items: flex-end;
 
     gap: 3px;
@@ -616,13 +1210,20 @@ button {
         rgba(255, 255, 255, 0.72);
 
     animation:
-        musicBars 0.85s ease-in-out infinite alternate;
+        musicBars
+        0.85s
+        ease-in-out
+        infinite
+        alternate;
 
-    animation-play-state: paused;
+    animation-play-state:
+        paused;
 }
 
-#music-player.visible #playing-indicator span {
-    animation-play-state: running;
+#music-player.visible
+#playing-indicator span {
+    animation-play-state:
+        running;
 }
 
 #playing-indicator span:nth-child(2) {
@@ -652,12 +1253,14 @@ button {
     }
 }
 
+
 /* =========================================================
    MODERN CONTROLS
 ========================================================= */
 
 #controls {
     display: flex;
+
     align-items: center;
 
     gap: 7px;
@@ -669,26 +1272,31 @@ button {
     position: relative;
 
     display: grid;
+
     place-items: center;
 
     width: 45px;
     height: 45px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.18);
+        1px solid
+        rgba(255, 255, 255, 0.18);
 
     border-radius: 50%;
 
     background:
         rgba(255, 255, 255, 0.10);
 
-    color: #fff;
+    color: #ffffff;
 
     cursor: pointer;
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        0 5px 18px rgba(0, 0, 0, 0.18);
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.10),
+
+        0 5px 18px
+        rgba(0, 0, 0, 0.18);
 
     transition:
         transform 0.18s ease,
@@ -722,7 +1330,8 @@ button {
 
 #play-pause {
     background:
-        rgba(255, 255, 255, 0.17) !important;
+        rgba(255, 255, 255, 0.17)
+        !important;
 }
 
 #play-pause .icon-pause {
@@ -743,6 +1352,7 @@ button {
     width: 21px;
     height: 21px;
 }
+
 
 /* =========================================================
    MOBILE
@@ -780,6 +1390,48 @@ button {
 
         line-height: 1.02;
     }
+
+
+    /* ---------------------------------------------
+       CLOUD PORTAL
+    --------------------------------------------- */
+
+    #mystical-video-window {
+        width: 91vw;
+
+        top: 48%;
+
+        aspect-ratio: 4 / 3;
+    }
+
+    .mystical-video-inner {
+        inset:
+            8%
+            5%
+            8%
+            5%;
+    }
+
+    .watermark-cloud {
+        width: 67%;
+        height: 64%;
+
+        right: -12%;
+        bottom: -17%;
+    }
+
+    .cloud-left {
+        width: 29%;
+    }
+
+    .cloud-top {
+        width: 80%;
+    }
+
+
+    /* ---------------------------------------------
+       MUSIC PLAYER
+    --------------------------------------------- */
 
     #music-player {
         bottom:
@@ -832,7 +1484,16 @@ button {
     }
 }
 
-@media (max-height: 600px) and (min-width: 601px) {
+
+/* =========================================================
+   SHORT LANDSCAPE SCREENS
+========================================================= */
+
+@media (
+    max-height: 600px
+) and (
+    min-width: 601px
+) {
 
     #site-title {
         top: 20%;
@@ -845,287 +1506,36 @@ button {
             );
     }
 
+    #mystical-video-window {
+        top: 48%;
+
+        width:
+            min(
+                560px,
+                58vw
+            );
+    }
+
     #music-player {
         bottom: 12px;
     }
 }
+
+
 /* =========================================================
-   MYSTICAL VIDEO WINDOW
+   REDUCED MOTION
 ========================================================= */
 
-#mystical-video-window {
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    z-index: 8;
-
-    width: min(620px, 62vw);
-    aspect-ratio: 16 / 9;
-
-    transform: translate(-50%, -50%);
-
-    pointer-events: none;
-}
-
-
-/* ---------------------------------------------------------
-   VIDEO CONTAINER
---------------------------------------------------------- */
-
-.mystical-video-inner {
-    position: relative;
-
-    width: 100%;
-    height: 100%;
-
-    overflow: hidden;
-
-    border-radius: 34px;
-
-    background:
-        rgba(10, 10, 10, 0.35);
-
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.48),
-        inset 0 0 35px rgba(255, 255, 255, 0.08);
-
-    isolation: isolate;
-}
-
-
-/* ---------------------------------------------------------
-   VIDEO
---------------------------------------------------------- */
-
-#mystical-video {
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    display: block;
-
-    filter:
-        saturate(0.9)
-        contrast(0.96)
-        brightness(0.92);
-}
-
-
-/* ---------------------------------------------------------
-   MYSTICAL FRAME
---------------------------------------------------------- */
-
-.mystical-video-inner::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 4;
-
-    pointer-events: none;
-
-    border-radius: inherit;
-
-    border:
-        2px solid
-        rgba(255, 255, 255, 0.32);
-
-    box-shadow:
-
-        inset 0 0 0 5px
-        rgba(255, 255, 255, 0.035),
-
-        inset 0 0 30px
-        rgba(255, 255, 255, 0.16),
-
-        inset 0 -35px 55px
-        rgba(0, 0, 0, 0.20);
-}
-
-
-/* ---------------------------------------------------------
-   SOFT CLOUDY OUTER HALO
---------------------------------------------------------- */
-
-.mystical-video-inner::after {
-    content: "";
-
-    position: absolute;
-
-    inset: -18px;
-
-    z-index: 5;
-
-    pointer-events: none;
-
-    border-radius: 45px;
-
-    background:
-        radial-gradient(
-            ellipse at 15% 20%,
-            rgba(255,255,255,0.28) 0%,
-            rgba(255,255,255,0.10) 18%,
-            transparent 43%
-        ),
-
-        radial-gradient(
-            ellipse at 90% 85%,
-            rgba(255,255,255,0.22) 0%,
-            rgba(255,255,255,0.08) 18%,
-            transparent 44%
-        );
-
-    filter:
-        blur(14px);
-
-    opacity: 0.75;
-}
-
-
-/* ---------------------------------------------------------
-   LOWER-RIGHT CLOUD
-   This deliberately covers a substantial portion of the
-   lower-right corner.
---------------------------------------------------------- */
-
-.watermark-cloud {
-    position: absolute;
-
-    right: -7%;
-    bottom: -13%;
-
-    z-index: 6;
-
-    width: 52%;
-    height: 55%;
-
-    pointer-events: none;
-
-    background:
-
-        radial-gradient(
-            ellipse at 72% 70%,
-            rgba(246, 247, 244, 0.98) 0%,
-            rgba(241, 243, 240, 0.94) 28%,
-            rgba(235, 238, 235, 0.78) 48%,
-            rgba(235, 238, 235, 0.28) 67%,
-            transparent 78%
-        ),
-
-        radial-gradient(
-            ellipse at 48% 55%,
-            rgba(255,255,255,0.95) 0%,
-            rgba(247,248,246,0.75) 38%,
-            transparent 70%
-        ),
-
-        radial-gradient(
-            ellipse at 82% 38%,
-            rgba(255,255,255,0.92) 0%,
-            rgba(244,246,243,0.48) 43%,
-            transparent 73%
-        );
-
-    filter:
-        blur(9px);
-
-    transform:
-        rotate(-8deg);
-
-    opacity: 0.96;
-}
-
-
-/* Extra cloud puffs */
-.watermark-cloud::before {
-    content: "";
-
-    position: absolute;
-
-    width: 62%;
-    height: 55%;
-
-    left: 0;
-    top: 5%;
-
-    border-radius: 50%;
-
-    background:
-        rgba(250,251,249,0.82);
-
-    filter:
-        blur(15px);
-}
-
-
-.watermark-cloud::after {
-    content: "";
-
-    position: absolute;
-
-    width: 65%;
-    height: 62%;
-
-    right: -3%;
-    bottom: 0;
-
-    border-radius: 50%;
-
-    background:
-        rgba(242,244,241,0.88);
-
-    filter:
-        blur(16px);
-}
-
-
-/* ---------------------------------------------------------
-   VIGNETTE INSIDE VIDEO
---------------------------------------------------------- */
-
-.mystical-video-inner {
-    box-shadow:
-        0 30px 80px rgba(0,0,0,0.48),
-        inset 0 0 70px rgba(0,0,0,0.18);
-}
-
-
-/* ---------------------------------------------------------
-   MOBILE
---------------------------------------------------------- */
-
-@media (max-width: 600px) {
-
-    #mystical-video-window {
-        width:
-            min(
-                88vw,
-                520px
-            );
-
-        top: 48%;
-
-        aspect-ratio: 16 / 10;
-    }
-
-    .mystical-video-inner {
-        border-radius: 25px;
-    }
-
-    .watermark-cloud {
-        width: 62%;
-        height: 62%;
-
-        right: -10%;
-        bottom: -14%;
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .portal-cloud,
+    .watermark-cloud,
+    .watermark-cloud span,
+    #vinyl,
+    #playing-indicator span,
+    .online-dot {
+        animation: none !important;
     }
 }
