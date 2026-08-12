@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ml">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="referrer"
+        content="strict-origin-when-cross-origin"
+    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി</title>
+
+    <!-- Modern Malayalam typeface -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Noto+Sans+Malayalam:wght@500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<main id="app">
+
+    <div id="background"></div>
+    <div id="dark-overlay"></div>
+
+    <!-- Top information -->
+    <div id="clock">3:42 pm</div>
+
+    <div id="online">
+        <span class="online-dot"></span>
+        <span id="online-number">128</span>
+        <span class="online-text">online</span>
+    </div>
+
+    <!-- Text title, replacing title.png -->
+    <div id="site-title">
+        <span>പ്രൈവറ്റ് ബസ്</span>
+        <span>പാട്ട് പെട്ടി</span>
+    </div>
+
+    <!-- Start screen -->
+    <div id="start-screen">
+
+        <button id="start-button" type="button">
+            <span class="start-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 5.5v13l11-6.5z"></path>
+                </svg>
+            </span>
+
+            <span>PLAY</span>
+        </button>
+
+        <div class="start-subtitle">
+           Songs for the Road
+        </div>
+
+    </div>
+
+    <!-- YouTube player -->
+    <iframe
+        id="youtube-player"
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/videoseries?si=UlBlISeN5WMd9KmM&amp;list=PL6P929LsnhPJIF6Iz2b8Dyz4oU84kI75F&amp;enablejsapi=1&amp;origin=https%3A%2F%2Faswinkrishnan-b.github.io"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+    </iframe>
+
+    <!-- Minimal glass jukebox -->
+    <div id="music-player">
+
+        <!-- Vinyl -->
+        <div id="vinyl-container" aria-hidden="true">
+            <div id="vinyl">
+                <div class="vinyl-label"></div>
+                <div class="vinyl-hole"></div>
+            </div>
+        </div>
+
+        <!-- Minimal status -->
+        <div id="player-status">
+            <div id="now-playing">
+                LIVE NOW
+            </div>
+
+            <div id="playing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Modern controls -->
+        <div id="controls">
+
+            <button
+                id="play-pause"
+                type="button"
+                aria-label="Play"
+                title="Play / Pause"
+            >
+                <svg
+                    class="icon-play"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path d="M8 5.5v13l11-6.5z"></path>
+                </svg>
+
+                <svg
+                    class="icon-pause"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path d="M7 5h3v14H7zM14 5h3v14h-3z"></path>
+                </svg>
+            </button>
+
+            <button
+                id="next"
+                type="button"
+                aria-label="Next song"
+                title="Next"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path d="M5 6.5v11l8-5.5zM15 6.5v11h2v-11z"></path>
+                </svg>
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script src="./app.js?v=20260812-4"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+
+</body>
+</html>
