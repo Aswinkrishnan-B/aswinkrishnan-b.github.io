@@ -115,19 +115,57 @@
 
     <div id="mystical-video-window">
 
+    <!-- Atmospheric clouds behind the video -->
+    <div class="portal-cloud cloud-back"></div>
 
-        <!-- Background cloud layer -->
+    <div class="portal-cloud cloud-top"></div>
 
-        <div
-            class="portal-cloud cloud-back"
-        ></div>
+    <div class="portal-cloud cloud-left"></div>
+
+    <div class="portal-cloud cloud-bottom"></div>
 
 
-        <!-- Top cloud -->
+    <!-- Video -->
+    <div class="mystical-video-inner">
 
-        <div
-            class="portal-cloud cloud-top"
-        ></div>
+        <video
+            id="mystical-video"
+            muted
+            autoplay
+            loop
+            playsinline
+            webkit-playsinline
+            preload="auto"
+            disablepictureinpicture
+        >
+            <source
+                src="./cloud-video.mp4"
+                type="video/mp4"
+            >
+        </video>
+
+
+        <!-- Atmospheric fade over the edges -->
+        <div class="video-edge-fade"></div>
+
+
+        <!-- Large cloud hiding the watermark -->
+        <div class="watermark-cloud">
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Additional atmospheric haze -->
+    <div class="portal-haze"></div>
+
+</div>
 
 
         <!-- Left cloud -->
