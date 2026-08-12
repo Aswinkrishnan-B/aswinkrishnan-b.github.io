@@ -3,6 +3,7 @@ const PLAYLIST_ID =
 
 let player = null;
 let playerReady = false;
+let playlistLoaded = false;
 
 
 /* =====================================================
@@ -40,10 +41,6 @@ const onlineNumber =
     document.getElementById("online-number");
 
 
-/* =====================================================
-   STARTUP
-===================================================== */
-
 console.log(
     "Private Bus Paattu Petti starting..."
 );
@@ -68,7 +65,7 @@ function updateClock() {
     const suffix =
         hours >= 12 ? "pm" : "am";
 
-    hours = hours % 12;
+    hours %= 12;
 
     if (hours === 0) {
         hours = 12;
@@ -80,14 +77,11 @@ function updateClock() {
 
 updateClock();
 
-setInterval(
-    updateClock,
-    1000
-);
+setInterval(updateClock, 1000);
 
 
 /* =====================================================
-   FAKE ONLINE COUNT
+   DECORATIVE ONLINE COUNT
 ===================================================== */
 
 let listeners = 128;
@@ -126,20 +120,8 @@ window.onYouTubeIframeAPIReady = function () {
         "youtube-player",
         {
 
-            /*
-             * The player itself is essentially invisible.
-             */
-
             width: "1",
             height: "1",
-
-
-            /*
-             * IMPORTANT:
-             *
-             * Load the playlist HERE rather than calling
-             * loadPlaylist() after initialization.
-             */
 
             playerVars: {
 
@@ -155,20 +137,10 @@ window.onYouTubeIframeAPIReady = function () {
 
                 rel: 0,
 
-                /*
-                 * Playlist
-                 */
+                modestbranding: 1,
 
-                listType: "playlist",
-
-                list: PLAYLIST_ID,
-
-                /*
-                 * Required/recommended origin for the
-                 * IFrame API.
-                 */
-
-                origin: window.location.origin
+                origin:
+                    window.location.origin
             },
 
 
@@ -181,10 +153,7 @@ window.onYouTubeIframeAPIReady = function () {
                     onPlayerStateChange,
 
                 onError:
-                    onPlayerError,
-
-                onAutoplayBlocked:
-                    onAutoplayBlocked
+                    onPlayerError
             }
         }
     );
@@ -205,30 +174,42 @@ function onPlayerReady() {
 
 
     /*
-     * We deliberately DO NOT call:
+     * THIS IS THE IMPORTANT PART.
      *
-     * player.loadPlaylist(...)
-     *
-     * here.
-     *
-     * The playlist was already supplied in playerVars.
+     * We use the object syntax because PLAYLIST_ID
+     * is a playlist ID, not an array of video IDs.
      */
 
-
-    /*
-     * Give YouTube a moment to cue the first video,
-     * then inspect it.
-     */
-
-    setTimeout(
-        updateTrackInformation,
-        1200
+    console.log(
+        "Loading playlist:",
+        PLAYLIST_ID
     );
+
+
+    try {
+
+        player.cuePlaylist({
+
+            listType: "playlist",
+
+            list: PLAYLIST_ID,
+
+            index: 0
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Playlist loading exception:",
+            error
+        );
+    }
 }
 
 
 /* =====================================================
-   START BUTTON
+   START
 ===================================================== */
 
 if (startButton) {
@@ -245,7 +226,7 @@ if (startButton) {
             if (!playerReady || !player) {
 
                 console.warn(
-                    "YouTube player is not ready."
+                    "Player is not ready."
                 );
 
                 return;
@@ -258,17 +239,12 @@ if (startButton) {
 
 
             /*
-             * This is called directly as the result
-             * of the user's click, so browser autoplay
-             * policy should permit it.
+             * If the playlist has successfully cued,
+             * this starts the first track.
              */
 
             player.playVideo();
 
-
-            /*
-             * Remove start screen.
-             */
 
             if (startScreen) {
 
@@ -277,10 +253,6 @@ if (startButton) {
                 );
             }
 
-
-            /*
-             * Show glass player.
-             */
 
             if (musicPlayer) {
 
@@ -319,11 +291,8 @@ if (playPause) {
 
 
             if (
-                state ===
-                    YT.PlayerState.PLAYING ||
-
-                state ===
-                    YT.PlayerState.BUFFERING
+                state === YT.PlayerState.PLAYING ||
+                state === YT.PlayerState.BUFFERING
             ) {
 
                 player.pauseVideo();
@@ -354,7 +323,7 @@ if (nextButton) {
 
 
             console.log(
-                "Next track..."
+                "Skipping to next track..."
             );
 
 
@@ -384,7 +353,6 @@ function onPlayerStateChange(event) {
 
     switch (event.data) {
 
-
         case YT.PlayerState.UNSTARTED:
 
             console.log(
@@ -394,13 +362,15 @@ function onPlayerStateChange(event) {
             break;
 
 
-        case YT.PlayerState.ENDED:
+        case YT.PlayerState.CUED:
 
             console.log(
-                "Track ended. Moving to next..."
+                "Playlist successfully cued."
             );
 
-            player.nextVideo();
+            playlistLoaded = true;
+
+            updateTrackInformation();
 
             break;
 
@@ -411,13 +381,9 @@ function onPlayerStateChange(event) {
                 "Playing."
             );
 
-
             if (playPause) {
-
-                playPause.textContent =
-                    "Ⅱ";
+                playPause.textContent = "Ⅱ";
             }
-
 
             updateTrackInformation();
 
@@ -430,11 +396,8 @@ function onPlayerStateChange(event) {
                 "Paused."
             );
 
-
             if (playPause) {
-
-                playPause.textContent =
-                    "▶";
+                playPause.textContent = "▶";
             }
 
             break;
@@ -449,29 +412,16 @@ function onPlayerStateChange(event) {
             break;
 
 
-        case YT.PlayerState.CUED:
+        case YT.PlayerState.ENDED:
 
             console.log(
-                "Video cued."
+                "Track ended."
             );
 
-            updateTrackInformation();
+            player.nextVideo();
 
             break;
     }
-}
-
-
-/* =====================================================
-   AUTOPLAY BLOCKED
-===================================================== */
-
-function onAutoplayBlocked() {
-
-    console.warn(
-        "YouTube autoplay was blocked."
-    );
-
 }
 
 
@@ -554,7 +504,6 @@ function updateThumbnail(videoId) {
                 "loaded"
             );
 
-
             if (albumPlaceholder) {
 
                 albumPlaceholder.style.display =
@@ -563,21 +512,12 @@ function updateThumbnail(videoId) {
         };
 
 
-    albumArt.onerror =
-        function () {
-
-            console.warn(
-                "Thumbnail unavailable."
-            );
-        };
-
-
     albumArt.src = url;
 }
 
 
 /* =====================================================
-   YOUTUBE ERRORS
+   YOUTUBE ERROR
 ===================================================== */
 
 function onPlayerError(event) {
@@ -589,11 +529,34 @@ function onPlayerError(event) {
 
 
     /*
-     * 2   = Invalid parameter
-     * 5   = HTML5 player error
-     * 100 = Video unavailable/private
-     * 101 = Embedding prohibited
-     * 150 = Embedding prohibited
+     * Error 2:
+     * Invalid parameter.
+     *
+     * If we get this here, YouTube has rejected
+     * the supplied playlist ID.
+     */
+
+    if (event.data === 2) {
+
+        console.error(
+            "YouTube rejected the playlist ID."
+        );
+
+        console.error(
+            "Playlist:",
+            PLAYLIST_ID
+        );
+
+        console.error(
+            "This is no longer an autoplay/origin problem."
+        );
+
+        return;
+    }
+
+
+    /*
+     * Skip unavailable videos.
      */
 
     if (
@@ -603,7 +566,7 @@ function onPlayerError(event) {
     ) {
 
         console.log(
-            "Skipping unavailable/non-embeddable track."
+            "Skipping unavailable video."
         );
 
 
@@ -611,7 +574,6 @@ function onPlayerError(event) {
             function () {
 
                 if (player) {
-
                     player.nextVideo();
                 }
 
