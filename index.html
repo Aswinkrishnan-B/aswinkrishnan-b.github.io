@@ -1,61 +1,124 @@
 <!DOCTYPE html>
 <html lang="ml">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
-<title>പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <div class="bg-layer"></div>
-  <div class="bg-vignette"></div>
+    <!-- Full-screen background -->
+    <main class="scene">
 
-  <div class="top-bar">
-    <div id="clock" class="clock">--:--</div>
-    <div class="online-badge">
-      <span class="dot"></span>
-      <span id="onlineCount">--</span>&nbsp;online
-    </div>
-  </div>
+        <div class="background"></div>
+        <div class="vignette"></div>
 
-  <header class="title-wrap">
-    <img class="title-img" src="title.png" alt="പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി">
-  </header>
+        <!-- Top-left clock -->
+        <div class="clock" id="clock">
+            3:38 pm
+        </div>
 
-  <!-- YouTube plays here, kept off-screen — we only show our own glass controls -->
-  <div id="ytHost" class="yt-host" aria-hidden="true"></div>
+        <!-- Top-right online indicator -->
+        <div class="online">
+            <span class="online-dot"></span>
+            <span id="listenerCount">127</span>
+            <span class="online-label">online</span>
+        </div>
 
-  <section id="startScreen" class="login-card glass">
-    <p class="login-copy">ബസ് പാട്ട് പെട്ടി തുടങ്ങാൻ ടാപ്പ് ചെയ്യൂ</p>
-    <button id="startBtn" class="btn primary">▶ തുടങ്ങൂ</button>
-  </section>
+        <!-- Title -->
+        <img
+            src="title.png"
+            class="site-title"
+            alt="പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി"
+        >
 
-  <section id="player" class="player-bar glass hidden">
-    <div class="art-frame">
-      <img id="albumArt" src="" alt="" class="album-art">
-    </div>
+        <!-- Initial interaction screen -->
+        <div class="start-screen" id="startScreen">
 
-    <div class="track-meta">
-      <p id="trackName" class="track-name">—</p>
-    </div>
+            <button class="start-button" id="startButton">
+                <span class="start-icon">▶</span>
+                <span>തുടങ്ങൂ</span>
+            </button>
 
-    <div class="controls">
-      <button id="playPauseBtn" class="btn control control-main" aria-label="Play or pause">
-        <svg id="iconPlay" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-        <svg id="iconPause" viewBox="0 0 24 24" width="22" height="22" class="hidden"><path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-      </button>
-      <button id="skipBtn" class="btn control" aria-label="Next song">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-      </button>
-    </div>
-  </section>
+            <div class="start-hint">
+                സ്വകാര്യ ബസ് യാത്രയ്ക്കുള്ള പാട്ടുപെട്ടി
+            </div>
 
-  <p id="statusLine" class="status-line"></p>
+        </div>
 
-  <script src="app.js"></script>
+        <!-- Hidden YouTube player -->
+        <div id="youtube-player"></div>
+
+        <!-- Bottom glass player -->
+        <div class="player-container" id="playerContainer">
+
+            <div class="player-bar">
+
+                <!-- Current song thumbnail -->
+                <div class="thumbnail-wrapper">
+                    <img
+                        id="songThumbnail"
+                        class="song-thumbnail"
+                        src=""
+                        alt=""
+                    >
+
+                    <div class="thumbnail-placeholder" id="thumbnailPlaceholder">
+                        ♪
+                    </div>
+                </div>
+
+                <!-- Song information -->
+                <div class="song-info">
+
+                    <div class="song-label">
+                        ഇപ്പോൾ കേൾക്കുന്നത്
+                    </div>
+
+                    <div
+                        class="song-title"
+                        id="songTitle"
+                    >
+                        പ്രൈവറ്റ് ബസ് പാട്ട് പെട്ടി
+                    </div>
+
+                </div>
+
+                <!-- Controls -->
+                <div class="controls">
+
+                    <button
+                        class="control-button play-button"
+                        id="playButton"
+                        aria-label="Play"
+                    >
+                        ▶
+                    </button>
+
+                    <button
+                        class="control-button next-button"
+                        id="nextButton"
+                        aria-label="Next song"
+                    >
+                        <span>▶</span><span>▶</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="app.js"></script>
+
 </body>
 </html>
